@@ -1,0 +1,12 @@
+<aura:component controller="ServerSidePaginationController">
+    <aura:attribute name="object" type="String" default="NA"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <aura:attribute name="options" type="List"/>
+    
+    <lightning:dualListbox name="feldList"
+                            label= "{!object+' Fields'}"
+                            sourceLabel="Available"
+                            selectedLabel="Selected"
+                            fieldLevelHelp="Select Fields"
+                            options="{!v.options}"/>
+</aura:component>

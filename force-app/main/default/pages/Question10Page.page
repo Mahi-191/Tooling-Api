@@ -1,0 +1,19 @@
+<apex:page controller="Question10Class" showHeader="false" sidebar="false">
+    <apex:form >
+    <apex:pageBlock title="Merchandise"> 
+    	<apex:pageBlockSection title="Record List View">
+            
+            <apex:PageBlockTable value="{!RecordList}" var="record">
+                <apex:column headerValue="Name" value="{!record.Name}"/>
+                <apex:column headerValue="Description" value="{!record.Job_Description__c}"/>
+                <apex:column headerValue="Price" value="{!record.price__c}"/>
+                <apex:column headerValue="Stock Available" value="{!record.Total_Inventory__c}"/>
+                <apex:column headerValue="Quantity to Buy">
+                    <apex:inputField value="{!record.Total_Inventory__c}"/>
+                </apex:column>
+            </apex:PageBlockTable>
+        </apex:pageBlockSection>
+          
+    </apex:pageBlock>
+          </apex:form>
+</apex:page>

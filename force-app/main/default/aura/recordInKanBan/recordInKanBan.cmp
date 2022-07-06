@@ -1,0 +1,13 @@
+<aura:component>
+    <aura:attribute name="record" type="object"/>
+    <aura:attribute name="field" type="String"/>
+    <aura:attribute name="result" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+    
+    <aura:if isTrue="{!v.field eq 'Name'}">
+        <lightning:formattedUrl value="{!'/' + v.record.Id}" tooltip="{!'Detail Page of ' + v.result}" label="{!v.result}" target="_blank" class="slds-text-heading_small" />
+        <aura:set attribute="else">
+            {!v.result}
+        </aura:set>
+    </aura:if>
+</aura:component>

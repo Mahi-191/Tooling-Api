@@ -1,0 +1,92 @@
+<template>
+     <!-- Spinner -->
+     <div if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+    <div class="back" >
+        <!-- to get Credit Card Details show on page load and when user click Pay Using CreditCard -->
+        <template if:true={creditCard}>
+            <div class="slds-align_absolute-center ">
+                <p class="slds-text-heading_large slds-m-around_medium slds-text-color_inverse slds-font-weight_bold" >Authorize.Net Payment By Credit Card</p>
+            </div>
+            <div class="slds-align_absolute-center slds-box_x-small slds-theme_default slds-size_4-of-12 main">
+                <div class="slds-box_small slds-theme_shade slds-size_1-of-1 ">
+                    <div class="slds-box imgdiv">
+                        <img src={imageSrc} alt="logo">
+                    </div>
+                    <br/>
+                    <lightning-input class="slds-size_1-of-1 card" type="text" label="Card Number" placeholder="1234 XXXX XXXX 9876" required=true  maxlength="16" minlength="13"></lightning-input>
+                    <br/>
+                    <div class="slds-grid">
+                    <lightning-combobox class="slds-col slds-m-right_x-small month" label="Expiry Month"
+                                        options={months}  placeholder="--Month--"> </lightning-combobox>
+                    <lightning-combobox class="slds-col year" label="Expiry Year"
+                                        options={years}  placeholder="--Year--"> </lightning-combobox>
+                    <lightning-input class="slds-col slds-m-left_x-small cvv" type="text" label="cvv" placeholder="XXX"    maxlength="4" minlength="3"></lightning-input>
+                    </div>
+                    <br/><br/>
+                    <div >
+                        <button class="slds-align_absolute-center slds-size_1-of-1 slds-button slds-button_success" onclick={checkCard}>Place Order</button><br/>
+                       <p class="slds-align_absolute-center"><a onclick={ShowECheck}>Pay Using ECheck</a></p>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- to get ECheck detail from user show when user click pay using ECheck -->
+        <template if:true={eCheck}>
+            <div class="slds-align_absolute-center ">
+                <p class="slds-text-heading_large slds-m-around_medium slds-text-color_inverse slds-font-weight_bold" >Authorize.Net Payment By ECheck</p>
+            </div>
+            <div class="slds-align_absolute-center slds-box_x-small slds-theme_default slds-size_4-of-12 main">
+                <div class="slds-box_small slds-theme_shade slds-size_1-of-1 ">
+                    <div class="slds-box imgdiv">
+                        <img src={imageSrc} alt="logo">
+                    </div><br/>
+                    <!-- get Inputs -->
+                    <lightning-input class="slds-size_1-of-1 rNum" type="text" label="Routing Number" placeholder="1234XXXX9876" required="true" maxlength="9"></lightning-input><br/>
+                    <lightning-input class="slds-size_1-of-1 accNum" type="text" label="Account Number" placeholder="XXXXX1234" required="true" maxlength="17"></lightning-input><br/>
+                    <lightning-input class="slds-size_1-of-1 accName" type="Text" label="Name on Account" placeholder="Mahi" maxlength="22" minlength="1" required="true"></lightning-input><br/>
+                    <br/>
+                    <div >
+                        <button class="slds-align_absolute-center slds-size_1-of-1 slds-button slds-button_success" onclick={checkECheck}>Place Order</button><br/>
+                       <p class="slds-align_absolute-center"><a onclick={ShowCard}>Pay Using Credit Card</a></p>
+                    </div>
+                </div>
+               
+            </div>
+        </template>
+
+      <!-- Modal to display transaction Status -->
+    <template if:true={msgModal}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- button to close model -->
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close"></lightning-icon>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-01" class="slds-modal__title">Transaction {header}..</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <!-- when transaction failed -->
+                    <template if:true={error}>
+                        <div style="color:red; text-align: center;">
+                            {msg}
+                        </div>
+                    </template>
+                    <!-- when Transaction Successful -->
+                    <template if:true={Success}>
+                        <div style="color:green; text-align: center;">
+                            {msg} <br/> 
+                            Your transaction Id is =  {transId}
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    </div>
+</template>

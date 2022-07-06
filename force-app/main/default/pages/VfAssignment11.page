@@ -1,0 +1,29 @@
+<apex:page sidebar="false">
+    <script>
+       var selectAllCheckboxes = function(){
+            	CB1.checked = master.checked;
+             	CB2.checked = master.checked;
+             	CB3.checked = master.checked;
+             	CB4.checked = master.checked;
+             	CB5.checked = master.checked;
+        }
+    	var checkcheckbox = function(){
+        	if(CB1.checked==true && CB2.checked==true && CB3.checked==true && CB4.checked==true && CB5.checked==true){
+                master.checked = true;
+             }
+            else{
+                master.checked = false;
+             }
+        }
+    </script>
+    <apex:form >
+         <div>
+         Master <input type="checkbox" id="master" onclick="selectAllCheckboxes(this)"/><br/>
+         Checkbox 1: <input type="checkbox" id="CB1" onclick="checkcheckbox(this)"/><br/>
+         Checkbox 2: <input type="checkbox" id="CB2" onclick="checkcheckbox(this)"/><br/>
+         Checkbox 3: <input type="checkbox" id="CB3" onclick="checkcheckbox(this)"/><br/>
+         Checkbox 4: <input type="checkbox" id="CB4" onclick="checkcheckbox(this)"/><br/>
+         Checkbox 5: <input type="checkbox" id="CB5" onclick="checkcheckbox(this)"/>
+         </div>
+    </apex:form>   
+</apex:page>

@@ -1,0 +1,52 @@
+<template>
+
+    <div if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <!-- Start Header Label Passed from Parent -->
+    <div if:true={label}>
+        <label class="slds-form-element__label">{label}</label>
+    </div>
+
+    <!-- End Header Label Passed from Parent -->
+    <div class="slds-combobox_container">
+        <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox" >
+            <!-- Search Input -->
+            <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                <lightning-input class="inputBox"  disabled={disabled} placeholder="Select an Option" onclick={showOptions}  onblur={handleMouseOut} onkeyup={filterOptions} value={searchString} auto-complete="off" variant="label-hidden" id="combobox-id-1" ></lightning-input>
+                <lightning-icon class="slds-input__icon" icon-name="utility:down" size="x-small" alternative-text="downicon"></lightning-icon>
+            </div>
+            <!-- Dropdown List -->
+            <template if:true={showDropdown}>
+                <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid">
+                    <ul class="slds-listbox slds-listbox_vertical recordListBox" role="presentation">
+                        <div if:true={showOptionsList} >
+                            <template for:each={uiData} for:item="option">
+                                <li key={option.id} data-id={option.id} data-name={option.name} onmousedown={onSelect} class="slds-listbox__item eachItem">
+                                    <template if:true={option.selected}>
+                                        <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                    </template>
+                                    <span class="slds-media slds-listbox__option_entity verticalAlign slds-truncate">{option.name}</span>
+                                </li>
+                            </template>
+                            <template if:true={noResultfound} >
+                                <li class="slds-listbox__item">
+                                    <span class="slds-media slds-listbox__option_entity verticalAlign slds-truncate">{noResultfound}</span>
+                                </li>
+                            </template>
+                        </div>
+                       
+                    </ul>
+                </div>
+            </template>
+        </div>
+    </div>
+    <!-- Multi Select Pills -->
+    <template for:each={selectedList} for:item="option">
+        <!-- <template if:true={option.selected}> -->
+            <lightning-pill key={option.id} class="slds-m-around_xx-small slds-truncate" name={option.id} label={option.name} onremove={removeOption} icon-name="custom:custom11"></lightning-pill>
+        <!-- </template> -->
+    </template>
+ 
+</template>

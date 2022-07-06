@@ -1,0 +1,36 @@
+<aura:component>
+	<lightning:layout>
+    	<lightning:layoutItem padding="arround-small" size="6">
+            <legend id="newcampingform" class="slds-text-heading_small  slds-p-vertical_medium">
+          		Camping list
+        	</legend>
+            <form class="slds-form_stacked">
+            	<lightning:input type="" aura:id="campingform" 
+                             label="Name"
+                             name="itemname"
+                             value=""
+                             messageWhenRangeUnderflow=""/>
+                <lightning:input type="" aura:id="" 
+                             label=""
+                             name="expenseamount"
+                             value=""
+                             messageWhenRangeUnderflow=""/>
+                <lightning:input type="" aura:id="campingform" 
+                             label=""
+                             name="expenseamount"
+                             value=""
+                             messageWhenRangeUnderflow=""/>
+                <lightning:input type="" aura:id="campingform" 
+                             label=""
+                             name="expenseamount"
+                             value=""
+                             messageWhenRangeUnderflow=""/>
+                 <lightning:button label="Create item"
+                              class="slds-m-top_medium"
+                              variant="brand"
+                              onclick=""/>
+            
+            </form>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

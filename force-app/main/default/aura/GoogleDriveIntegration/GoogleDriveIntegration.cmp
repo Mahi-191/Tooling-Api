@@ -1,0 +1,178 @@
+<aura:component controller="IntegrationController" implements="lightning:isUrlAddressable,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global">
+    <aura:attribute name="data" type="object"/>   <!--to store google drive data -->
+    <aura:attribute name="showfolderModel" type="boolean" default="false"/>
+    <aura:attribute name="showfileModel" type="boolean" default="false"/>
+    <aura:attribute name="showDeleteModel" type="boolean" default="false"/>
+    <aura:attribute name="delId" type="String"/>
+    <aura:attribute name = "myBreadcrumbs" type="List"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/>
+
+    <!-- Spinner -->
+    <aura:if isTrue="{!v.spinner}" >
+        <div class="slds-align--absolute-center" style="z-index: 10000;">
+            <lightning:spinner alternativeText="Loading" variant="brand" size="medium" />
+        </div>
+    </aura:if>
+
+    <!-- folder Navigation(Breadcrumb) -->
+    <div class="slds-path slds-box">
+        <div class="slds-grid slds-path__track">
+          <div class="slds-grid slds-path__scroller-container">
+            <div class="slds-path__scroller">
+              <div class="slds-path__scroller_inner">
+                <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                <aura:iteration items="{!v.myBreadcrumbs}" var="crumbs">  
+                  <li class="slds-path__item slds-is-current slds-is-active slds-size_1-of-12" role="presentation">
+                    <div >
+                    <!-- <a aria-selected="true" class="slds-path__link" href="#" id="{!crumbs.id}" role="option" onclick="{! c.breadCrumbNavigation }">
+                      <span class="slds-path__title">{!crumbs.name}</span>
+                    </a> -->
+                    <lightning:breadcrumb aria-selected="true" class="slds-path__link breadcrumb" role="option" label="{!crumbs.name}" name = "{!crumbs.id}" onclick="{! c.breadCrumbNavigation }"/>     
+                    </div>
+                  </li>
+                </aura:iteration>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+                  
+    <!-- <div class="slds-box">
+        <lightning:breadcrumbs>
+            <aura:iteration items="{!v.myBreadcrumbs}" var="crumbs">
+                <lightning:breadcrumb label="{!crumbs.name}" name = "{!crumbs.id}" onclick="{! c.breadCrumbNavigation }"/>     
+            </aura:iteration>
+        </lightning:breadcrumbs>
+    </div> -->
+
+    <!-- table to store google drive data -->
+    <div class="slds-scrollable slds-box slds-theme_shade" style="height: 460px;">
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered ">
+            <thead>
+                <th> </th>
+                <th> File Name </th>
+                <th> Delete </th>
+                <th>Download </th>
+            </thead>
+            <tbody>
+                <!-- loop to iterate folders first -->
+                <aura:iteration items="{!v.data}" var="d">
+                    <aura:if isTrue="{!d.mimeType == 'application/vnd.google-apps.folder'}">
+                    <tr>
+                        <td class="slds-size_1-of-12">
+                            <lightning:icon iconName="standard:folder" alternativeText="folder" title="folder" />             
+                        </td>
+                        <th class="slds-size_1-of-9">
+                            <a href="">
+                                <div class="slds-truncate" data-id="{!d.id}" onclick="{!c.openFolder}" data-name="{!d.name}">
+                                    {!d.name}
+                                </div>
+                            </a>
+                        </th>
+                        <td class="slds-size_1-of-12">
+                            <button class="slds-button" onclick="{!c.showDelete}" id="{!d.id}"><lightning:icon iconName="action:delete" alternativeText="Delete" title="Delete" size="small"/></button>
+                        </td>
+                        <td></td>
+                    </tr>
+                    </aura:if>
+                </aura:iteration>
+                <!-- second loop to iterate files only -->
+                <aura:iteration items="{!v.data}" var="d">
+                    <aura:if isTrue="{!d.mimeType != 'application/vnd.google-apps.folder'}">
+                        <tr>
+                            <td class="slds-size_1-of-12"> 
+                                <lightning:icon iconName="standard:file" alternativeText="file" title="file" />
+                            </td>
+                            <th class="slds-size_1-of-9">
+                                {!d.name}
+                            </th>
+                            <td class="slds-size_1-of-12">
+                                <button class="slds-button" onclick="{!c.showDelete}" id="{!d.id}"><lightning:icon iconName="action:delete" alternativeText="Delete" title="Delete" size="small"/></button>
+                            </td>
+                            <td class="slds-size_1-of-12">
+                                <button class="slds-button" onclick="{!c.downloadFile}" id="{!d.id}"><lightning:icon iconName="action:download" alternativeText="Download" title="Download" size="small"/></button>
+                            </td>
+                        </tr>
+                    </aura:if>
+                </aura:iteration>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- buttons to create folder and upload File -->
+    <div class="slds-box slds-theme_shade">
+        <lightning:button variant="brand" label="Create New Folder" onclick="{!c.creatFolder}" />
+        <lightning:button variant="brand" label="Upload New File"  onclick="{! c.OpenUploadModel }" />
+    </div>
+
+    <!-- Create Folder Model Section -->
+    <aura:if isTrue="{!v.showfolderModel}">
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <!-- button to close model -->
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.closeModel}">
+                    <lightning:icon iconName="utility:close"/>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title slds-hyphenate">Create Folder</h1>
+                </div>
+                <!-- get folder name from user-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <lightning:input aura:id="folderName" name="folderName" label="Folder Name" />
+                </div>
+                <!--create butoon to process folder creation -->
+                <div class="slds-modal__footer">
+                    <lightning:button variant="brand" label="Create" onclick="{!c.create}" />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </aura:if>
+
+    <!-- upload File model Section -->
+    <aura:if isTrue="{!v.showfileModel}">
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <!-- button to close model -->
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.closeModel}">
+                    <lightning:icon iconName="utility:close"/>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title slds-hyphenate">Upload File</h1>
+                </div>
+                <!-- get attachment from user-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">                
+                    <lightning:input name="file1" type="file" label="Choose File" onchange="{!c.fileUpload}"/>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </aura:if>
+
+    <!-- Delete File model Section -->
+    <aura:if isTrue="{!v.showDeleteModel}">
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <!-- button to close model -->
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.closeModel}">
+                    <lightning:icon iconName="utility:close"/>
+                </button>
+                <div class="slds-modal__header">
+                    <h1 class="slds-modal__title slds-hyphenate">Delete File</h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                   Do You Really Want to Delete this File ?   
+                </div>
+                
+                <!-- buttons to conferm -->
+                <div class="slds-modal__footer">
+                    <lightning:button variant="destructive" label="Yes" onclick="{!c.deleteFile}" />
+                    <lightning:button variant="brand" label="No" onclick="{!c.closeModel}" />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </aura:if>
+</aura:component>

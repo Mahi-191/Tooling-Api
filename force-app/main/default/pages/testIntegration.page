@@ -1,0 +1,11 @@
+<apex:page controller="IntegrationController" action="{!auth_step_2}">
+  <apex:form >
+  <apex:commandButton action="{!auth_step_1}" value="Start oAuth" rerender="msgs"/>
+  <apex:commandButton action="{!getNewToken}" value="Get new Token" rerender="msgs"/>
+  </apex:form>
+
+  <apex:outPutPanel id="msgs">
+      <h1>Congratulations</h1>
+      {!$CurrentPage.parameters.access_token}
+  </apex:outPutPanel>
+</apex:page>

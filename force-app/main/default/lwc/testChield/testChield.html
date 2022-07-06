@@ -1,0 +1,10 @@
+<template>
+    <p>hello from chield</p>
+    <template for:each={conList} for:item="contact">
+        <li key={contact.Id}>
+            {contact.Name}, {contact.id}
+        </li>
+    </template>
+    {message}
+    <lightning-button label="click to see list" onclick={handleClick}></lightning-button>
+</template>

@@ -1,0 +1,27 @@
+<apex:page controller="VfAssignment8Class" sidebar="false">
+        <apex:form >
+    <apex:pageBlock title="VF assignment 8" >
+        <apex:pageMessages />
+    	<apex:pageBlockButtons >
+        	<apex:commandButton action="{!Save}" value="Save"/>
+            <apex:commandButton action="{!QuickSave}" value="Quick Save"/>
+        </apex:pageBlockButtons>
+        <apex:pageBlockSection >
+        	<apex:pageBlockTable style="Width:200%;" value="{!act}" var="a" >
+        		<apex:column headerValue="Account Name" >
+                	<apex:inputField value="{!a.Name}"/>
+                </apex:column>
+        		<apex:column headerValue="Industry">
+                	<apex:inputField value="{!a.Industry}"/>
+                </apex:column>
+        		<apex:column headerValue="Account Id">
+                	<apex:inputField value="{!a.Id}"/>
+                </apex:column>
+        		<apex:column headerValue="Account Rating">
+                	<apex:inputField value="{!a.Rating}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>    
+</apex:page>

@@ -1,0 +1,102 @@
+<apex:page controller="wraperclassstore">
+    <apex:form >
+        <apex:pageBlock title="Merchandise">
+            <apex:pageBlockSection title="Record List View">
+                <apex:pageBlockTable value="{!Record}" var="item">
+                    
+                    <apex:column headerValue="Name">
+                        <apex:outputText value="{!item.Name}"/>
+                    </apex:column>
+                        
+                    <apex:column headerValue="Description">
+                        <apex:outputText value="{!item.Description}"/>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Price">
+                        <apex:outputText value="{!item.Price}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Stock Available">
+                        <apex:outputText value="{!item.Stock}"/>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Qty to Buy">
+                        <apex:inputText value="{!item.qtyToBuy}" rendered="{!item.Stock}"/>
+                        <apex:inputText value="{!item.qtyToBuy}" rendered="{!NOT(item.Stock)}"/>
+                    </apex:column>
+                    
+                </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+       
+        <apex:commandButton action="{!addToCart}" value="Add To Cart" reRender="cart"/>
+        
+    </apex:form>
+   
+    <apex:form >
+        <apex:pageBlock title="Cart List" id="cart">
+            <apex:pageBlockSection >
+                <apex:pageBlockTable value="{!cartList}" var="item">
+                    
+                    <apex:column headerValue="Name">
+                        <apex:outputText value="{!item.Name}"/>
+                    </apex:column>
+                        
+                    <apex:column headerValue="Description">
+                        <apex:outputText value="{!item.Description}"/>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Price">
+                        <apex:outputText value="{!item.Price}"/>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Qty to Buy">
+                        <apex:outputText value="{!item.qtyToBuy}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Total Amount">
+                        <apex:outputText value="{!item.totalAmount}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Select">
+                        <apex:inputCheckbox value="{!item.checkStatus}"/>
+                    </apex:column>
+                    
+                 </apex:pageBlockTable>
+            </apex:pageBlockSection>
+        </apex:pageBlock>
+        
+        <apex:commandButton action="{!shopNow}" value="Shop Now" reRender="shop"/>
+        
+    </apex:form>
+    
+    <apex:pageBlock title="PurchaseList" id="shop">
+        <apex:pageBlockSection >
+            
+            <apex:pageBlockTable value="{!ShopList}" var="item">
+                    <h1> Congratulation Your order is received.</h1>
+                    <apex:column headerValue="Name">
+                        <apex:outputText value="{!item.Name}"/>
+                    </apex:column>
+                        
+                    <apex:column headerValue="Description">
+                        <apex:outputText value="{!item.Description}"/>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Price">
+                        <apex:outputText value="{!item.Price}"/>
+                    </apex:column>
+                   
+                    <apex:column headerValue="Qty to Buy">
+                        <apex:outputText value="{!item.qtyToBuy}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Total Amount">
+                        <apex:outputText value="{!item.totalAmount}"/>
+                    </apex:column>
+                    
+                 </apex:pageBlockTable>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+   
+</apex:page>

@@ -1,0 +1,131 @@
+<aura:component implements="flexipage:availableForAllPageTypes"  access="global" controller="kanbanController">
+    <aura:attribute name="objectList" type="List"/>
+    <aura:attribute name="selectedObject" type="String"/>
+    <aura:attribute name="picklists" type="List"/>
+    <aura:attribute name="selectedPicklist" type="String"/>
+    <aura:attribute name="recordsMap" type="List"/>
+    <aura:attribute name="fieldList" type="List"/>
+    <aura:attribute name="selectedList" type="String[]"/>
+    <aura:attribute name="showKanBan" type="boolean" default="false"/>
+    <aura:attribute name="showModel" type="boolean" default="false"/>
+    <aura:attribute name="spinner" type="boolean" default="false"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+
+    <!-- Spinner -->
+   <aura:if isTrue="{!v.spinner}" >
+        <div class="slds-align--absolute-center" style="z-index: 10000;">
+            <lightning:spinner alternativeText="Loading" variant="brand" size="medium" />
+        </div>
+    </aura:if>
+    <!-- page header Section -->
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container" title="kanban">
+                        <lightning:icon iconName="utility:kanban" alternativeText="kanban" title="kanban" />
+                    </span>
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-page-header__name">
+                        <div class="slds-page-header__name-title">
+                        <h1>
+                            <span class="slds-page-header__title" title="kanban">Kanban View</span>
+                        </h1>
+                        </div>
+                    </div>
+                    <p class="slds-page-header__name-meta">{!v.selectedObject}</p>
+                </div>
+                <div class="lgc-bc slds-m-left_large">
+                    <!-- button to select object -->
+                    <lightning:buttonMenu alternativeText="Select Object" label="object" tooltip="Choose Object" menuAlignment="auto" iconName="utility:settings" class="slds-m-around_x-small" onselect="{!c.getPicklists}">
+                        <aura:iteration items="{!v.objectList}" var="obj">
+                            <lightning:menuItem value="{!obj.value}" label="{!obj.label}" />
+                        </aura:iteration>
+                    </lightning:buttonMenu>
+                    <!-- button to select picklist field of a object -->
+                    <lightning:buttonMenu alternativeText="Select picklist" disabled="{!empty(v.picklists)}" label="Select picklist" tooltip="Choose field for kanban view" menuAlignment="auto" iconName="utility:kanban" class="slds-m-around_x-small" onselect="{!c.fieldsget}">
+                        <aura:iteration items="{!v.picklists}" var="obj">
+                            <lightning:menuItem value="{!obj.value}" label="{!obj.label}" />
+                        </aura:iteration>
+                    </lightning:buttonMenu>
+                    <!-- buttof to see model (popup box) -->
+                    <button class="slds-button slds-button_neutral" onclick="{!c.openModel}" disabled="{!!v.showKanBan}">Select Fields</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <!-- message when no picklist field in selected object -->
+        <aura:if isTrue="{!v.selectedObject}">
+            <aura:if isTrue="{!empty(v.picklists)}">
+                <p class="slds-text-heading_large slds-text-align_center slds-m-top_xx-large">Picklist Field Not Available on this Object</p>
+            </aura:if>
+        </aura:if>
+
+        <!-- Select Field Model Section -->
+        <aura:if isTrue="{!v.showModel}">
+            <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+                <div class="slds-modal__container">
+                    <!-- button to close model -->
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick="{!c.closeModel}">
+                        <lightning:icon iconName="utility:close"/>
+                    </button>
+                    <div class="slds-modal__header">
+                        <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Select Fields to show</h1>
+                    </div>
+                    <!-- combo box to show fields o card -->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <lightning:dualListbox name="feldList" label= "Object Fields" sourceLabel="Available"
+                                    value="{!v.selectedList}" selectedLabel="Selected" max="4"
+                                    fieldLevelHelp="Select Fields to see Records" options="{!v.fieldList}"/>
+                    </div>
+                    <!-- process button to show kanban -->
+                    <div class="slds-modal__footer">
+                        <lightning:button variant="brand" label="Process" onclick="{!c.getValues}" />
+                    </div>
+                </div>
+               
+            </section>
+        </aura:if>
+    </div>
+    <br/>
+    
+    <br/>
+    <!-- slds path with picklist Field Values as Title and related records -->
+    <aura:if isTrue="{!v.showKanBan}">
+        <div class="slds-scrollable">
+            <div class="slds-path">
+                <div class="slds-grid slds-path__track slds-has-overflow">
+                    <div>
+                        <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal">
+                            <aura:iteration items="{!v.recordsMap}" var="recList" indexVar="key">
+                                <li ><!-- path list-->
+                                    <div class="slds-path__item slds-is-current slds-is-active slds-size_small"  role="presentation">
+                                        <a aria-selected="true" class="slds-path__link" href="javascript:void(0);" id="path" role="option">
+                                            <span class="slds-path__title">{!recList.key} (<span id = "{!recList.key}">{!recList.value.length} </span>)</span>
+                                        </a>
+                                    </div>
+                                    <!-- records of related value-->
+                                    <div class="slds-size_small slds-box slds-box_x-small slds-scrollable_y slds-theme_default slds-theme_alert-texture slds-m-around_xx-small" style="height: 25rem;" ondrop="{!c.drop}" ondragover="{!c.allowdrop}" data-id ="{!recList.key}" data-old="{!recList.key}"> 
+                                        <aura:iteration items="{!recList.value}" var="obj">
+                                            <ul class="slds-box slds-box_x-small slds-m-around_xx-small slds-truncate slds-theme_default" id="{!obj.Id}" draggable="true" ondragstart="{!c.drag}" >
+                                                <aura:iteration items="{!v.selectedList}" var="fld">
+                                                    <li class="slds-item slds-text-align_center">
+                                                        <c:recordInKanBan record="{!obj}" field="{!fld}"/>
+                                                    </li>
+                                                </aura:iteration>
+                                            </ul>   
+                                        </aura:iteration>
+                                    </div>
+                                </li>
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+</aura:component>

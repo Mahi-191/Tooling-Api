@@ -1,0 +1,17 @@
+<apex:page standardController="Account" sidebar="false">
+  <apex:form >
+    <apex:pageBlock title="Assignment 2">
+        <apex:pageBlockButtons >
+        	<apex:commandButton action="{!Save}" value="Save"/>
+          	<apex:commandButton action="{!QuickSave}" value="Quick Save"/>
+            <apex:commandButton action="{!Cancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+    	<apex:pageblockSection columns="1">
+            <apex:inputField value="{!Account.Name}"/>
+            <apex:inputField value="{!Account.Industry}"/>
+            <apex:inputField value="{!Account.Rating}"/>
+            <apex:inputField value="{!Account.id}"/>w
+        </apex:pageblockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

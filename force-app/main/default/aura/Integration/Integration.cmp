@@ -1,0 +1,7 @@
+<aura:component controller="IntegrationController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+	<aura:attribute name="CurrentUser" type="User"/>
+	<aura:handler name="init" value="{!this}" action="{!c.init}"/>	
+	Integration started now
+	<p>{!v.CurrentUser.Name}</p>
+Integration started now
+</aura:component>

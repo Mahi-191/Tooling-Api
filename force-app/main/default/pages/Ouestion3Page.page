@@ -1,0 +1,12 @@
+<apex:page controller="Question3Class">
+    <apex:form >
+    	<apex:pageBlock >
+        	<apex:pageBlocktable value="{!m}" var="a">
+            	<apex:column value="{!a.Name}"/>
+                <apex:column value="{!a.Job_Description__c}"/>
+                <apex:column value="{!a.price__c}"/>
+            	<apex:column value="{!a.Total_Inventory__c}"/>
+            </apex:pageBlocktable>
+    	</apex:pageBlock>
+    </apex:form>
+</apex:page>

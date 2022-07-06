@@ -1,0 +1,23 @@
+<apex:page standardController="Merchandise__c" recordSetVar="Record">
+    <apex:form >
+     
+    <apex:pageBlock title="merchandise records">
+       
+         <apex:pageBlockButtons >
+      	<apex:commandButton action="{!Save}" value="Update Inventory" reRender="aa"/>
+        <apex:commandButton action="{!Cancel}" value="Cancel" reRender="aa"/>
+      </apex:pageBlockButtons>
+           
+        <apex:pageBlockSection id="aa">
+    	<apex:pageBlockTable value="{!Record}" var="m" >
+        	<apex:column value="{!m.Name}"/>
+            <apex:column value="{!m.Job_Description__c}"/>
+            <apex:column value="{!m.price__c}"/>
+            <apex:column headerValue="Total Inventory">
+            	<apex:inputField value="{!m.Total_Inventory__c}"/>
+            </apex:column>
+        </apex:pageBlockTable>
+            </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

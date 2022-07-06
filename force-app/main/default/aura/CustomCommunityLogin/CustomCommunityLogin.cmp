@@ -1,0 +1,63 @@
+<aura:component controller="LightningLoginFormController" implements="forceCommunity:availableForAllPageTypes">
+    <aura:attribute name="showError" type="Boolean" required="true" description="" default="false" access="private"/>
+    <aura:attribute name="errorMessage" type="String" required="false" description="" access="private"/>
+    <aura:attribute name="startUrl" type="String" required="false" description="The url you go to after a successful login" />
+    <!-- <aura:attribute name="usernameLabel" type="String" required="false" default="Username"/> -->
+    <!-- <aura:attribute name="passwordLabel" type="String" required="false" default="Password"/> -->
+    <!-- <aura:attribute name="loginButtonLabel" type="String" required="false" default="Log in"/> -->
+    <aura:attribute name="expid" type="String" required="false" description="The branding experience ID" />        
+    
+    <!-- <aura:attribute name="forgotPasswordLabel" type="String" required="false" default="Forgot password?"/> -->
+    <aura:attribute name="forgotPasswordUrl" type="String" required="false" default="/ForgotPassword"/>
+    
+    <aura:attribute name="isUsernamePasswordEnabled" type="Boolean" access="private"/>
+    <aura:attribute name="communityForgotPasswordUrl" type="String" access="private"/>
+    
+    
+    <aura:registerevent name="sitePropagatedStartUrl" type="c:setStartUrl"/>
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+    <aura:dependency resource="c:setStartUrl" type="EVENT"/>
+   
+    <aura:dependency resource="siteforce:registerQueryEventMap" type="EVENT"/>
+
+    <aura:handler event="c:setStartUrl" action="{!c.setStartUrl}"/>
+    <aura:handler event="c:setExpId" action="{!c.setExpId}"/>    
+    <aura:dependency resource="c:setExpId" type="EVENT"/>  
+    
+    <div class="background">
+        <aura:renderIf isTrue="{!v.isUsernamePasswordEnabled}">
+            <div class="slds-align_absolute-center slds-m-bottom_x-large">
+                <div class="xyzimg">
+                    <img style="filter: brightness(120%);
+                    filter: contrast(120%);
+                    filter: drop-shadow(10px 10px 10px rgb(188, 189, 188));" src="{!$Resource.bmLogo}" alt="User avatar"/>
+                </div>
+                
+            </div>
+            <span>
+                <aura:renderIf isTrue="{!v.showError}">
+                    <div id="error">
+                        <ui:outputRichText value="{!v.errorMessage}"/>
+                    </div>
+                </aura:renderIf>
+            </span>            
+            <div id="sfdc_username_container" class="sfdc">
+                <span id="sfdc_user" class="login-icon" data-icon="a"></span>
+                <ui:inputText value="" aura:id="username" placeholder="Username" keyup="{!c.onKeyUp}" class="input sfdc_usernameinput sfdc" label="Username" labelClass="assistiveText"/>
+            </div>
+    
+            <div id="sfdc_password_container" class="sfdc">
+                <span id="sfdc_user" class="login-icon sfdc" data-icon="c"></span>
+                <ui:inputSecret value="" aura:id="password" placeholder="Password" keyup="{!c.onKeyUp}" class="input sfdc_passwordinput sfdc" label="Password" labelClass="assistiveText"/>
+            </div>
+    
+            <div class="sfdc">
+                <ui:button aura:id="submitButton" label="Log in" press="{!c.handleLogin}" class="sfdc_button"/>
+            </div>
+            
+            <div id="sfdc_forgot" class="sfdc">
+                <span><a href="{!if(v.communityForgotPasswordUrl == null, v.forgotPasswordUrl, v.communityForgotPasswordUrl)}">Forgot password?</a></span>                           
+            </div> 
+        </aura:renderIf>
+    </div>
+</aura:component>

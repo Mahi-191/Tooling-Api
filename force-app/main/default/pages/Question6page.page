@@ -1,0 +1,16 @@
+<apex:page standardController="Merchandise__c" showHeader="false" sidebar="false" recordSetVar="record">
+	<apex:pageBlock title="Merchandises">
+    	<apex:form >
+        	<apex:dataList value="{!record}" var="x">
+                <apex:commandLink reRender="i">{!x.Name}
+                	<apex:param name="kid" value="{!x.id}" />
+                </apex:commandLink>
+            </apex:dataList>
+        </apex:form>
+    </apex:pageBlock>
+    <apex:pageBlock title="details">
+    	<apex:outputPanel id="i">
+        <apex:detail relatedList="false" title="false" subject="{!$CurrentPage.parameters.kid}"/>
+        </apex:outputPanel>            
+    </apex:pageBlock>
+</apex:page>

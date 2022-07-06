@@ -1,0 +1,71 @@
+<template>
+    <div class="slds-page-header">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="utility:layout_tile" alternative-text="lazy" title="Lazy"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1>
+                                    <span class="slds-page-header__title slds-truncate" title="Lazy Loading">Lazy Loading</span>
+                                </h1>
+                            </div>
+                        </div>
+                        <p class="slds-page-header__name-meta">Total Records : {totalRecords}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+       <div if:true={showSpinner}>
+           <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+       </div>
+       <div class="slds-box slds-theme_shade slds-theme_alert-texture slds-m-top_x-small">
+      <div class="scroll" onscroll={handelScroll}>
+       <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered css-serial">
+           <thead>
+               <tr class="slds-line-height_reset"> 
+                <th style='width: 20px'>S.No.</th> 
+                <th><lightning-input type="checkbox"  name="input1" checked={checkRoot} onchange={rootCheckBox}></lightning-input> </th>               
+                   <template for:each={columnsList} for:item="colHeader" for:index="index">                      
+                       <th scope="col" key={colHeader}>
+                         <a onclick={sort} data-id={colHeader.fieldName}>  <strong><div class="slds-truncate slds-grid" title="Id">{colHeader.label}
+
+                            <div data-id={colHeader.fieldName} data-index={index} class="slds-col slds-m-left_small" if:true={colHeader.isSorted}>
+                                <div if:true={arrowUp}>&#x21E7;</div>
+                                <div if:true={arrowDWN}>&#x21E9;</div>
+                            </div>
+                         </div></strong>
+                            
+                        </a>
+                       </th>
+                   </template>
+               </tr>
+           </thead>
+           <tbody>
+               <template for:each={data} for:item="obj" for:index="index">
+                   <tr key={obj.Id} class="slds-hint-parent">
+                    <td style='width: 20px'></td>
+                    <td><lightning-input type="checkbox" checked={obj.isChecked} name="input2" onchange={childCheckBox} data-index={index}></lightning-input></td>   
+                       <!-- <template for:each={obj.values} for:item="val">               
+                           <td key={val}> 
+                               {val}
+                           </td>
+                       </template> -->
+                       <template for:each={columnsList} for:item="field">
+                        <td key={obj.Id}>
+                            <c-lazy-loading-data record={obj} fieldapi={field.fieldName}></c-lazy-loading-data>
+                        </td>
+
+                       </template>
+                   </tr>
+               </template>
+           </tbody>            
+       </table>
+    </div>    
+    </div>
+   </template>

@@ -1,0 +1,30 @@
+.THIS.root {
+
+    width: 1000px;
+    height: 200px;
+    
+}
+.THIS.div1 {
+    float: left;
+    width: 200px;
+    height: 200px;
+    background-color: darkcyan;
+    padding: 10px;
+ 
+}
+.THIS.div2 {
+    float: left;
+    width: 200px;
+    height: 200px;
+    background-color: darkcyan;
+    padding: 10px;
+ 
+}
+.THIS.div3 {
+    float: left;
+    width: 200px;
+    height: 200px;
+    background-color: darkcyan;
+    padding: 10px;
+    
+}

@@ -1,0 +1,51 @@
+<template>
+    <div class="slds-grid ">
+        <div class="slds-box slds-size_1-of-2 slds-theme_shade" style="height: 300px;"> Select Metadata Type
+            <div class="slds-combobox_container">
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox" >
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        <lightning-input class="inputBox" type="search" placeholder="Filter Metadata Types.." onkeyup={SearchOption} variant="label-hidden" ></lightning-input>
+                    </div>
+                    <!-- Dropdown List -->
+                    <!-- <template if:true={showDropdown}> -->
+                        <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid">
+                            <ul class="slds-listbox slds-listbox_vertical recordListBox" role="presentation">
+                                <template for:each={metaDataTypes} for:item="option">
+                                    <li key={option.name}  data-name={option.name} onmousedown={onSelect} class="slds-listbox__item eachItem">
+                                        <template if:true={option.selected}>
+                                            <lightning-icon icon-name="utility:check" size="x-small"></lightning-icon>
+                                        </template>
+                                        <span class="slds-media slds-listbox__option_entity verticalAlign slds-truncate">{option.label}</span>
+                                    </li>
+                                </template>                               
+                            </ul>
+                        </div>
+                    <!-- </template> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="slds-box slds-size_1-of-2 slds-theme_shade" style="height: 300px;">selected data
+            <div class="slds-combobox_container">
+                <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open" aria-expanded="true" aria-haspopup="listbox" role="combobox" >
+                    <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                        <lightning-input class="inputBox" type="search" placeholder="Filter metadata.." onkeyup={searchData}  variant="label-hidden" ></lightning-input>
+                    </div>
+                    <!-- Dropdown List -->
+                    <!-- <template if:true={showDropdown}> -->
+                        <div id="listbox-id-2" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid">
+                            <ul class="slds-listbox slds-listbox_vertical recordListBox" role="presentation">
+                                <template for:each={metadata} for:item="option">
+                                    <li key={option.id} data-id={option.id}  onmousedown={openFile} class="slds-listbox__item eachItem">
+                                        <span class="slds-media slds-listbox__option_entity verticalAlign slds-truncate">{option.label}</span>
+                                    </li>
+                                </template>                               
+                            </ul>
+                        </div>
+                    <!-- </template> -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>

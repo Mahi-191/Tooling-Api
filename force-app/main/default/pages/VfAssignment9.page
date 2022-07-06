@@ -1,0 +1,38 @@
+<apex:page Controller="VfAssignment9Class" sidebar="false">
+    <apex:form >
+        <apex:pageBlock title="VF assignment 9" >
+        <apex:pageBlockButtons >
+        	<apex:commandButton action="{!Save}" value="Save" reRender="list"/>
+            <apex:commandButton action="{!QuickSave}" value="Quick Save" reRender="list"/>
+        </apex:pageBlockButtons>
+        <apex:outputLabel value="Filter:"/>
+      		<apex:selectList value="{!filter}" size="1">
+            	<apex:actionSupport event="onchange" rerender="list" action="{!setAccfilter}" status="pageStatus"/>
+        		<apex:selectOptions value="{!items}"/>
+      		</apex:selectList>
+            <apex:actionStatus id="pageStatus" >
+    			<apex:facet name="start">
+        			<apex:outputPanel >
+            			<img src="/img/loading32.gif" width="20" height="20" />
+        			</apex:outputPanel>            
+    			</apex:facet>
+			</apex:actionStatus>
+        	<apex:pageBlockSection >
+        		<apex:pageBlockTable value="{!act}" var="a" id="list" style="Width:200%;">
+        			<apex:column headerValue="Account Name">
+                		<apex:inputField value="{!a.Name}"/>
+                	</apex:column>
+        			<apex:column headerValue="Industry">
+                		<apex:inputField value="{!a.Industry}"/>
+                    </apex:column>
+                    <apex:column headerValue="Account Id">
+                        <apex:inputField value="{!a.Id}"/>
+                    </apex:column>
+                    <apex:column headerValue="Account Rating">
+                        <apex:inputField value="{!a.Rating}"/>
+                    </apex:column>
+            	</apex:pageBlockTable>                
+        	</apex:pageBlockSection>
+       	</apex:pageBlock>
+    </apex:form>
+</apex:page>

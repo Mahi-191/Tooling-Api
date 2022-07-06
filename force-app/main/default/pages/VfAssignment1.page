@@ -1,0 +1,12 @@
+<apex:page standardController="Account" sidebar="false">
+	<apex:form >
+    	<apex:pageBlock title="VF Assignment 1">
+        	<apex:pageBlockSection columns="1">
+                <apex:outputField value="{!Account.Name}"/>
+                <apex:outputField value="{!Account.Industry}"/>
+                <apex:outputField value="{!Account.Id}"/>
+   				<apex:outputField value="{!Account.Rating}"/>
+            </apex:pageBlockSection>
+    	</apex:pageBlock>
+  	</apex:form>
+</apex:page>

@@ -1,0 +1,52 @@
+<aura:component controller="ServerSidePaginationController">
+    <aura:attribute name="options" type="List" />
+    <aura:attribute name="selectedValue" type="String" />
+    <aura:attribute name="fieldList" type="List"/>
+    <aura:attribute name="selectedList" type ="List"/>
+    <aura:attribute name="isFieldSelected" type = "boolean" default="false"/> 
+    <aura:attribute name="spinner" type="boolean" default="FALSE"/>
+    <aura:handler name="init" value="{!this}" action="{!c.init}" />
+    <!-- Register Event to pass selected data to parent -->
+    <aura:registerEvent name="PassObjAndFields" type="c:PassObjAndFields"/>
+
+    <aura:if isTrue="{!v.spinner}" >
+      <div class="slds-align--absolute-center slds-is-relative" style="z-index: 10000;">
+         <lightning:spinner alternativeText="Loading" variant="brand" size="medium" />
+      </div>
+   </aura:if>
+
+    <div class="slds-page-header slds-page-header_object-home">
+        <lightning:layout>
+            <lightning:layoutItem padding="around-small">
+                <div>
+                    <p class="slds-text-heading_medium slds-line-height_reset">Select object:</p>
+                    <!-- combo Box show all list of objects and return selected object's api name -->
+                    <lightning:combobox name="objects" style="width : 300px;" placeholder="--none--" 
+                            value="{!v.selectedValue}" options="{!v.options}" onchange="{!c.fieldsget}"/>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem>
+                <div class="slds-m-top_xx-large">
+                    <lightning:button variant="brand" label="Reset" title="Reset" onclick="{!c.reset}"/>
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <aura:if isTrue="{!v.selectedValue}">
+            <lightning:layout  verticalAlign="center">
+                <lightning:layoutItem padding="around-small">
+                    <div style= "width:500px">
+                        <!-- dule list box to show all available fields and selected fields get selected fields apin Name from Value  -->
+                        <lightning:dualListbox name="feldList" label= "Object Fields" sourceLabel="Available"
+                                    value="{!v.selectedList}" selectedLabel="Selected"
+                                    fieldLevelHelp="Select Fields to see Records" options="{!v.fieldList}" onchange="{!c.disableProcess}"/>
+                    </div>
+                </lightning:layoutItem>
+                <lightning:layoutItem padding="around-small">
+                    <div class="slds-m-left_xx-large">
+                        <lightning:button variant="brand" label="Process" disabled="{!!v.isFieldSelected}" onclick="{!c.displayrecord}" />
+                    </div>
+                </lightning:layoutItem>
+            </lightning:layout>
+        </aura:if>
+    </div>  
+</aura:component>

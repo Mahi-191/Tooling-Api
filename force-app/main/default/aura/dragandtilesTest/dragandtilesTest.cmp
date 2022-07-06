@@ -1,0 +1,25 @@
+<aura:component>
+    <aura:attribute name="divId" type="string"/>
+    <div aura:id="root" class="slds-box slds-theme_shade slds-theme_alert-texture slds-p-around_small " width="100%" hight="300px">
+        
+
+       
+    </div>
+    <div  data-id="drop1" class="slds-box slds-theme_shade slds-m-around_small" width="100%" ondrop="{!c.drop}" ondragover="{!c.allowdrop}">
+        <div aura:id="drag" class="slds-box slds-theme_shade slds-theme_alert-texture slds-p-around_small " id="drag" draggable="true" ondragstart="{!c.drag}">
+            <p>Drag This Element</p>
+        </div>
+    </div>
+    <div  data-id="drop2" class="slds-box slds-theme_shade slds-m-around_small " width="100%" ondrop="{!c.drop}" ondragover="{!c.allowdrop}">
+
+    </div>
+    <div  data-id="drop3" class="slds-box slds-theme_shade slds-m-around_small " width="100%" ondrop="{!c.drop}" ondragover="{!c.allowdrop}">
+
+    </div>
+    <div  data-id="drop4" class="slds-box slds-theme_shade slds-m-around_small " width="100%" ondrop="{!c.drop}" ondragover="{!c.allowdrop}">
+
+    </div>
+
+
+    
+</aura:component>

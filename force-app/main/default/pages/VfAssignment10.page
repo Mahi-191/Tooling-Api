@@ -1,0 +1,58 @@
+<apex:page Controller="VfAssignment10Class" sidebar="false">
+    <apex:form >
+        <apex:pageBlock title="VF assignment 10" >
+        <apex:pageBlockButtons >
+        	<apex:commandButton action="{!Save}" value="Save"/>
+            <apex:commandButton action="{!QuickSave}" value="Quick Save"/>
+        </apex:pageBlockButtons>
+       <apex:outputLabel value="Filter:"/>
+      		<apex:selectList value="{!filter}" size="1">
+            	<apex:actionSupport event="onchange" action="{!setAcfilter}" reRender="list, table,prv,nxt,fst,lst" status="pageStatus"/>
+        		<apex:selectOptions value="{!options}"/>
+      		</apex:selectList>
+            <apex:actionStatus id="pageStatus" >
+    			<apex:facet name="start">
+        			<apex:outputPanel >
+            			<img src="/img/loading32.gif" width="20" height="20" />
+        			</apex:outputPanel>            
+    			</apex:facet>
+			</apex:actionStatus>
+        	<apex:pageBlockSection >
+        		<apex:pageBlockTable value="{!acc}" var="a" id="list" style="Width:200%;" rows="{!list_Size}">
+        			<apex:column headerValue="Account Name">
+                		<apex:inputField value="{!a.Name}"/>
+                	</apex:column>
+        			<apex:column headerValue="Industry">
+                		<apex:inputField value="{!a.Industry}"/>
+                    </apex:column>
+                    <apex:column headerValue="Account Id">
+                        <apex:inputField value="{!a.Id}"/>
+                    </apex:column>
+                    <apex:column headerValue="Account Rating">
+                        <apex:inputField value="{!a.Rating}"/>
+                    </apex:column>
+            	</apex:pageBlockTable>                
+        	</apex:pageBlockSection>
+            <table Width="100%" >
+                <td>
+                Page:<apex:outputText value="  {!pagenumber} of {! CEILING(total_size / list_Size) } " id="table"/>          
+                </td>
+              <td align="center">
+ 					<apex:commandButton id="fst" action="{!First}" value="First" disabled="{!DisabledPrevious}"  reRender="list, table,prv,nxt,fst,lst" />
+               		<apex:commandButton id="prv" action="{!previous}" Value="Previous" disabled="{!DisabledPrevious}" reRender="list, table,prv,nxt,fst,lst"/>
+                    <apex:commandButton id="nxt" action="{!next}" Value="Next" disabled="{!DisabledNext}" reRender="list, table,prv,nxt,fst,lst"/>
+            		<apex:commandButton id="lst" action="{!Last}" Value="Last" disabled="{!DisabledNext}" reRender="list, table,prv,nxt,fst,lst"/>
+                </td>
+            	<td align="Right">Records per page:
+                <apex:selectList value="{! PageSize }" size="1">
+   					<apex:selectOption itemValue="5" itemLabel="5"/>
+                    <apex:selectOption itemValue="10" itemLabel="10"/>
+    				<apex:selectOption itemValue="15" itemLabel="15"/>
+    				<apex:actionSupport event="onchange" reRender="list, table"/>
+				</apex:selectList>
+                </td>
+            </table>
+          
+       	</apex:pageBlock>
+    </apex:form>
+</apex:page>

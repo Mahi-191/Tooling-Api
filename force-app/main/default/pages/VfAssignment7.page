@@ -1,0 +1,17 @@
+<apex:page controller="VfAssignment7Class" sidebar="false">
+   <apex:form > 
+    <apex:pageBlock title="Assignment 7">
+        <apex:pageBlockButtons >
+        	<apex:commandButton action="{!Save}" value="Save"/>
+          	<apex:commandButton action="{!QuickSave}" value="Quick Save"/>
+            <apex:commandButton action="{!Cancel}" value="Cancel"/>
+        </apex:pageBlockButtons>
+    	<apex:pageblockSection columns="1">
+            <apex:inputField value="{!acc.Name}"/>
+            <apex:inputField value="{!acc.Industry}"/>
+            <apex:inputField value="{!acc.Rating}"/>
+            <apex:inputField value="{!acc.id}"/>
+        </apex:pageblockSection>
+    </apex:pageBlock>
+  </apex:form>
+</apex:page>

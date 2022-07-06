@@ -1,0 +1,53 @@
+<apex:page controller="Paginationtest1" sidebar="false">
+    <apex:pageBlock id="allobjects">
+        <apex:form >
+            
+            <apex:outputText >Select Object: </apex:outputText>
+          	<apex:selectList value="{!sObj}" size="1" style="Width : 300px; padding:3px; font-size: 15px;">
+                <apex:actionSupport event="onchange" action="{!fetchFields}" reRender="lists" status="pageStatus"/>
+        		<apex:selectOptions value="{!sObjectList}" />
+      		</apex:selectList>
+            <apex:commandButton value="Reset" action="{!reset}" reRender="lists, allobjects" style="width:70px; font-size: 12px; padding : 5px;" status="pageStatus"/>
+            <apex:actionStatus id="pageStatus" >
+    			<apex:facet name="start">
+        			<apex:outputPanel >
+            			<img src="/img/loading32.gif" width="20" height="20" />
+        			</apex:outputPanel>            
+    			</apex:facet>
+            </apex:actionStatus>
+        </apex:form>
+     </apex:pageBlock>
+    <apex:outputPanel >
+   <apex:outputPanel id="lists">    
+     <apex:pageBlock rendered="{!show}">
+    	<apex:form >
+            <table width = "800px">
+                <tr>
+                    <td align="left">
+                        <apex:outputText ><h1>{!sObj}: Fields</h1></apex:outputText><br/>
+                   		<apex:selectList size="12" value="{!selectedFields}" id="Fields" multiselect="true" style="Width : 300px; font-size : 15px;">
+                        	<apex:actionSupport event="onchange"   reRender="selectedFields"/>
+            				<apex:selectOptions value="{!objFields}" />
+            			</apex:selectList> 
+                    </td>              
+                    <td align="center" style="padding-top: 40px;">
+                        <apex:commandButton id="Add" value="Add" action="{!add}" reRender="selectedFields, Fields, remove, Add" disabled="{!addDisable}" style="width:70px; font-size: 12px; padding : 5px; " status="pageStatus"/><br/><br/>
+                   		 <apex:commandButton id="remove" value="Remove" action="{!removeButton}" disabled="{!removeDisable}" style="width:70px; font-size: 12px; padding : 5px; " reRender="selectedFields,Fields,remove, Add" status="pageStatus"/> 
+                    </td>
+                    <td align="right">
+                        <apex:outputText >Selected: Fields</apex:outputText><br/>
+                		<apex:selectList size="12" value="{!removeFields}" multiselect="true" id="selectedFields" style="Width : 300px; font-size : 15px;">
+            				<apex:selectOptions value="{!selectedFieldsOptions}" />
+            			</apex:selectList> 
+                    </td>
+                    <td align="center" style="padding-Bottom: 10px;">
+                        <!-- <apex:commandButton value="Proceed"  reRender="remove, Add" style="width:70px; font-size: 12px; padding : 5px;" status="pageStatus"/> -->
+                        <apex:commandButton value="Proceed"   style="width:70px; font-size: 12px; padding : 5px;" status="pageStatus"/>
+                    </td>
+                </tr>
+            </table>   
+        </apex:form>
+    </apex:pageBlock>
+    </apex:outputPanel>
+  </apex:outputPanel>
+</apex:page>

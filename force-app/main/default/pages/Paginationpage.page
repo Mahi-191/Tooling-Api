@@ -1,0 +1,75 @@
+<apex:page controller="PaginationController" sidebar="false">
+    <apex:pageBlock id="allobjects">
+        <apex:form >
+            <h2>Select Object:-</h2>&nbsp;&nbsp;
+            <!--show sObjects pick List  -->
+          	<apex:selectList value="{!sObj}" size="1" style="Width : 300px; padding:3px; font-size: 15px;">
+                <apex:actionSupport event="onchange" action="{!fetchFields}" reRender="lists,PaginationComponnent" status="pageStatus"/>
+        		<apex:selectOptions value="{!sObjectList}" />
+      		</apex:selectList>&nbsp;&nbsp;
+            <apex:commandButton value="Reset" action="{!reset}" reRender="lists, allobjects, PaginationComponnent" style="width:70px; font-size: 12px; padding : 5px;" status="pageStatus"/>
+            
+            <!-- spinner code  -->
+            <apex:actionStatus id="pageStatus" >
+    			<apex:facet name="start">
+                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.50; z-index: 1000; background-color: black;">
+                         &nbsp;
+                    </div>
+                    <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 30% 50%">
+                        <img src="/img/loading32.gif" width="20" height="20" />
+                    </div>
+                </apex:facet>
+            </apex:actionStatus>
+
+        </apex:form>
+     </apex:pageBlock>
+   <apex:outputPanel layout="block" id="lists">    
+     <apex:outputPanel rendered="{!show}">
+    	<apex:form >
+            <table width = "800px">
+                <tr>
+                    <td align="left">
+                        <!-- List of fields of Selected Sobject -->
+                        <apex:outputText ><h1>{!sObjLable}: Fields</h1></apex:outputText><br/>
+                   		<apex:selectList size="10" value="{!selectedFields}" id="Fields" multiselect="true" style="Width : 280px; font-size : 14px;">
+                        	<apex:actionSupport event="onchange"   reRender="selectedFields"/>
+            				<apex:selectOptions value="{!objFields}" />
+            			</apex:selectList> 
+                    </td> 
+                    <!-- Add and Remove Buttons -->
+                    <td align="center" style="padding-top: 40px;">
+                        <apex:commandButton id="Add" value="Add" action="{!add}" reRender="selectedFields, Fields, remove, Add, next" disabled="{!addDisable}" style="width:70px; font-size: 12px; padding : 5px; " status="pageStatus"/><br/><br/>
+                   		 <apex:commandButton id="remove" value="Remove" action="{!removeButton}" disabled="{!removeDisable}" style="width:70px; font-size: 12px; padding : 5px; " reRender="selectedFields,Fields,remove, Add, next" status="pageStatus"/> 
+                    </td>
+                    <td>
+                        <!-- list of selected fields feom all fields list -->
+                        <apex:outputText style="align:left;">Selected Fields :</apex:outputText><br/>
+                		<apex:selectList size="10" value="{!removeFields}" multiselect="true" id="selectedFields" style="Width : 280px; font-size : 14px;">
+            				<apex:selectOptions value="{!selectedFieldsOptions}" />
+            			</apex:selectList> 
+                    </td>
+                    <td align="center" style="padding-Bottom: 10px;">
+                        <apex:commandButton value="Process Records" id="next" reRender="PaginationComponnent, form" disabled="{!removeDisable}" action="{!process}" oncomplete="jsCall();" style="width:120px; font-size: 12px; padding : 5px;" status="pageStatus"/>
+                    </td>
+                </tr>
+            </table> 
+        </apex:form>
+     </apex:outputPanel>
+  </apex:outputPanel>
+
+  <script type="text/javascript">
+    // javascript function to call component's actionFunction
+    function jsCall(){
+        refreshPage();
+    }
+  </script>
+  <br/>
+  <!-- component for record table -->
+  <apex:outputPanel id="PaginationComponnent">
+      <apex:outputPanel rendered="{!paginationBlock}"  layout="block">
+          <apex:form >
+         <c:PaginationComponent ObjectValue="{!sobj}" fieldValue="{!fieldsApiName}" fieldsLable="{!fieldsLableName}"/>
+        </apex:form>
+      </apex:outputPanel>
+  </apex:outputPanel>
+</apex:page>

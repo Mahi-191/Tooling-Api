@@ -1,0 +1,32 @@
+<apex:page controller="Question9Class" showHeader="false" sidebar="false">
+    <apex:pageBlock >
+    	<apex:pageBlockSection >
+            <apex:form >
+                <apex:dataList value="{!Fb}" var="x">
+                    <apex:outputText value="{!x}"/>
+                </apex:dataList>
+            	<apex:commandButton action="{!pageref}" value="Click me" rerender="block2"/>
+            </apex:form>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+    	<apex:pageBlockSection >
+            <apex:form >
+             <apex:dataList value="{!Sb}" var="x"  id="block2">
+                    <apex:outputText value="{!x}"/>
+                </apex:dataList>
+           	 <apex:commandButton action="{!pageref1}" value="Click me" rerender="block3"/>
+            </apex:form>        
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+    <apex:pageBlock >
+    	<apex:pageBlockSection >
+        	<apex:dataList value="{!tb}" var="x" id="block3">
+            	<apex:outputText value="{!x}"/>
+            </apex:dataList>
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+    
+</apex:page>

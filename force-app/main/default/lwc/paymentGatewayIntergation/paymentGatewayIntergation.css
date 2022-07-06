@@ -1,0 +1,10 @@
+.back{
+    background-image: linear-gradient(to right, rgb(53, 7, 7) , rgb(101, 42, 3));
+    height: 90vh;
+}
+.imgdiv{
+    background: cornflowerblue;
+}
+.main{
+    box-shadow: 0 0 7px 7px rgba(6, 0, 0, 0.675);
+}

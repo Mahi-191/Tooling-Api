@@ -1,0 +1,85 @@
+<aura:component controller="ServerSidePaginationController" implements="flexipage:availableForAllPageTypes"  access="global">
+   <aura:attribute name="obj" type="string"/>
+   <aura:attribute name="fields" type="List"/>
+   <!-- wraper object with list of records, totalRecords, first record id, last record id -->
+   <aura:attribute name="records" type="object"/> 
+   <!-- list which contains fieldname, lable, type, sortable -->
+   <aura:attribute name="mycolumns" type="list"/>
+   <aura:attribute name="sortDirection" type="String" default="asc" />
+   <aura:attribute name="defaultSortDirection" type="String" default="asc" />
+   <aura:attribute name="sortedBy" type="String"/>
+   <!-- selectd by checkbox -->
+   <aura:attribute name="selectedRecords" type="List"/>
+   <aura:attribute name="temSelectList" type="List"/>
+   <aura:attribute name="pageSize" type="Integer" default="10"/>
+   <aura:attribute name="pageNumber" type="Integer" default="1"/>
+   <aura:attribute name="totalPages" type="Integer"/>
+   <aura:attribute name="hasNext" type="boolean" default="false"/>
+   <aura:attribute name="hasPrevious" type="boolean" default="true"/>
+   <aura:attribute name="hasRecords" type="boolean" default="false"/>
+   <aura:attribute name="spinner" type="boolean" default="FALSE"/>
+
+   <!-- event to get selected object and selected Fields -->
+   <aura:handler name="PassObjAndFields" event="c:PassObjAndFields" action="{!c.getattribute}"/>
+
+   <!--boolean true when page change to prevent to run checkbox method on page change  -->
+   <aura:attribute name="hasPageChanged" type="Boolean" />
+   <aura:attribute name="initialLoad" type="Boolean" default="true"/> 
+
+   <div>
+      <c:ObjectAndFields />
+   </div>
+   
+   <br/>
+   <!-- Spinner -->
+   <aura:if isTrue="{!v.spinner}" >
+         <div class="slds-is-relative" >
+            <lightning:spinner alternativeText="Loading" variant="brand" size="medium" />
+         </div>
+         <div class="slds-backdrop slds-backdrop_open"></div>
+   </aura:if>
+
+   <aura:if isTrue="{!v.obj}">
+      <div class="slds-page-header slds-page-header_object-home slds-p-around_small slds-box slds-theme_shade slds-theme_alert-texture">
+         <p class="slds-text-heading_medium slds-line-height_reset slds-p-around_small">Total {!v.records.totalRecords} Records </p>
+         <div class="slds-scrollable slds-box slds-theme_shade" style="height:15rem;">
+            <div>
+            <lightning:datatable data="{! v.records.records }" columns="{! v.mycolumns }" keyField="Id"
+                     defaultSortDirection="{!v.defaultSortDirection}" sortedDirection="{!v.sortDirection}" sortedBy="{!v.sortedBy}"
+                     onsort="{!c.handleSort}" selectedRows = "{!v.selectedRecords}" onrowselection ="{!c.handleSelect}"/>
+            </div>  
+            <aura:if isTrue="{!!v.hasRecords}">
+               <p class="slds-text-heading_medium slds-align_absolute-center slds-m-top_XX-large">No Records Found</p>
+            </aura:if>
+          </div>
+         
+         <lightning:layout horizontalAlign="space" verticalAlign="center">
+            <lightning:layoutItem>
+               <div class="slds-float_left slds-m-top_large slds-m-right_x-small ">
+                  <p class="slds-text-heading_small" >Records Per Page : </p>
+               </div>
+               <div class="slds-float_right slds-m-bottom_medium">
+                  <lightning:select name="selectItem"  value="{!v.pageSize}" onchange="{!c.sizeChange}">
+                     <option value="5">5</option>
+                     <option value="10">10</option>
+                     <option value="25">25</option>
+                  </lightning:select>
+               </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem>
+               <div class="nev-Buttons">
+                  <lightning:button variant="brand" label="First" title="first" onclick="{!c.handleNavigation}" disabled="{!v.hasPrevious}"/>
+                  <lightning:button variant="brand" label="Previous" title="previous" onclick="{!c.handleNavigation}" disabled="{!v.hasPrevious}"/>
+                  <lightning:button variant="brand" label="Next" title="next" onclick="{!c.handleNavigation}" disabled="{!v.hasNext}"/>
+                  <lightning:button variant="brand" label="Last" title="last" onclick="{!c.handleNavigation}" disabled="{!v.hasNext}"/>
+               </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem>
+               <div>
+                  <p class="slds-text-heading_small"> Page : {!v.pageNumber} / {!v.totalPages}</p>
+               </div>
+            </lightning:layoutItem>   
+         </lightning:layout>  
+      </div>
+   </aura:if>
+</aura:component>

@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="pass object and selected Fields">
+    <aura:attribute name="obj" type="String"/>
+    <aura:attribute name="fields" type="List"/>
+</aura:event>

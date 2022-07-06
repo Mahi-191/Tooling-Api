@@ -1,0 +1,63 @@
+<template>
+    <!-- Spinner -->
+    <div  class="slds-is-relative" if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </div>
+    <!-- check records available or not -->
+    <template if:true={isnoRecords}>
+        <div class="slds-box slds-theme_shade">
+            <p class="slds-text-heading_medium slds-align_absolute-center slds-m-top_XX-large">No Records Found</p>
+        </div>
+    </template>
+    
+    <!-- Show Records in lightning data table  -->
+    <template if:false={isnoRecords}>
+        <div class="slds-box slds-theme_shade">
+            <lightning-card title = "Search Records" class=" slds-theme_shade"  icon-name = "custom:custom9"> 
+                <!-- Searching -->
+                    <template if:true={hasName}>
+                        <div class="slds-size_small slds-m-bottom_medium" slot="actions">
+                            <lightning-input type="search" placeholder="Search Name" onchange={searchKeyword}></lightning-input>
+                        </div>
+                    </template>
+                 </lightning-card>
+            <div class="slds-scrollable" style="height: 300px;">
+                <lightning-datatable key-field="Id" 
+                                     data={showrecords} columns={columnList}
+                                     sorted-direction={sortDirection}
+                                     sorted-by={sortedBy}
+                                     onsort={onHandleSort}
+                                     selected-rows={selectedIDs}
+                                     onrowselection={checkboxState}
+                                     onrowaction={handleRowAction}>
+                </lightning-datatable>
+            </div><br/>
+
+           <!-- section for navigation  -->
+            <div class="slds-box slds-grid slds-theme_shade">
+                 <!-- Select Page Size comboBox -->
+                <div class="slds-size_1-of-5 slds-align_absolute-center">
+                    <lightning-combobox value={pageSize} label=" Records per Page:"
+                                        options={pageSizeList} onchange={onSizeChange} >
+                    </lightning-combobox>
+                </div>
+
+                <!-- Buttons (first, Previous, Next, Last and 5 pageNumber Buttons) -->
+                <div class="slds-size_3-of-5 slds-align_absolute-center slds-m-top_medium">
+                    <lightning-button class="slds-m-left_xxx-small" label="&lt;&lt;" variant="brand-outline" onclick={handelFirst} disabled={disablePrevious}></lightning-button>
+                    <lightning-button class="slds-m-left_xxx-small" label="&lt;" variant="brand-outline"  onclick={handlePrevious} disabled={disablePrevious}></lightning-button>
+                    <template for:each={pageNoButtonList} for:item="btnValue">
+                        <div key={btnValue.value} class={btnValue.style}>
+                            <button class="slds-button slds-button_outline-brand slds-m-left_xxx-small" data-key={btnValue.value} onclick={handelpageNoButton}>{btnValue.value}</button> 
+                        </div>
+                    </template>
+                    <lightning-button class="slds-m-left_xxx-small" label="&gt;" variant="brand-outline" onclick={handelNext} disabled={disableNext}></lightning-button>
+                    <lightning-button class="slds-m-left_xxx-small" label="&gt;&gt;" variant="brand-outline" onclick={handelLast} disabled={disableNext}></lightning-button>
+                </div>
+                <!-- PageNumber out of Total Pages -->
+                <div class="slds-size_1-of-5 slds-align_absolute-center">page: {pageNumber}/{totalPages} </div>
+            </div>
+        </div>
+    </template>
+</template>

@@ -1,0 +1,166 @@
+<apex:component controller="PaginationComponentController" allowDML="true" >
+    <apex:outputPanel id="js">
+    <script type="text/javascript">
+    //function to check and uncheck chield checkboxes
+		function selectAllCheckboxes(obj){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){                                               
+               inputCheckBox[i].checked = obj.checked;                    
+            }
+        }
+        
+        //function to maintain master checkbox
+        function CheckAll(){
+            var totalcheckbox= document.querySelectorAll('input[class="child"]').length;                 
+            var totalchecked = document.querySelectorAll('input[class="child"]:checked').length;
+            console.log("number" + totalcheckbox +"checked" + totalchecked);
+            if(totalcheckbox == totalchecked && totalcheckbox>0){
+                document.getElementsByClassName("Master")[0].checked=true;        
+            }
+            else{
+                document.getElementsByClassName("Master")[0].checked=false;
+            }
+        }
+        
+        //Function to download CSV file of String recived from apex class
+        function downloadCSVFile(){
+            var csv = '{!stringCSV}';
+            var element = document.createElement('a');  
+            element.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);  
+            element.target = '_blank';     
+            element.download = '{!obj}_recotds.csv'; 
+            element.click(); 
+        }
+    </script>
+	</apex:outputPanel>
+
+    <!-- Spinner on apex hit-->
+        <apex:actionStatus id="PageStatus">
+            <apex:facet name="start">
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.50; z-index: 1000; background-color: black;">
+                &nbsp;
+            </div>
+            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 30% 50%">
+                <img src="/img/loading32.gif" width="20" height="20" />
+            </div>
+            </apex:facet>
+        </apex:actionStatus>
+    
+	<!-- three attribute first string type for selected object second and third string list for selected field's api name and lable--> 
+    <apex:attribute name="ObjectValue" description="This is the  selected object" type="String" required="true" assignTo="{!obj}" />
+    <apex:attribute name="fieldValue"  description="these are selected fields api name" type="String[]" AssignTo="{!FieldList}"/>
+    <apex:attribute name="fieldsLable"  description="these are selected fields lables" type="String[]" AssignTo="{!FieldLable}"/>
+    <apex:actionFunction name="refreshPage" action="{!firstAction}" oncomplete="CheckAll();" reRender="pagecomp" status="PageStatus"/>
+     
+    <!-- Error message position and 3 buttons -->
+    <apex:pageBlock id="pagecomp" >
+        <apex:pageMessages />
+        <apex:outputPanel >
+        <apex:outputPanel style="float:left;" layout="block" id="CSVandDELETE">
+            <apex:commandButton value="New Record" action="{!URLFOR($Action[obj].New)}" status="PageStatus"/>
+            <apex:commandButton value="Delete Selected" action="{!deleteSelectedRecords}" oncomplete="CheckAll();" reRender="pagecomp" status="PageStatus" disabled="{!selectedcount<1}"/>
+            <apex:commandButton value="Download CSV file" action="{!downloadCSV}" oncomplete="downloadCSVFile();CheckAll();" status="PageStatus" reRender="js,pagecomp"  disabled="{!selectedcount<1}"/>
+        </apex:outputPanel>
+       
+
+        <!--alphabatic filter-->
+        <apex:outputPanel style="float:Right;" layout="block">
+            <apex:repeat value="{!alphabet}" var="vr">
+                <apex:commandLink value="{!vr}" oncomplete="CheckAll();" action="{!charFilter}" reRender="pagecomp" style="text-decoration: none;{!if($CurrentPage.parameters.alphaChar=vr,'font-weight:bold;','')}" status="PageStatus">
+                    &nbsp;|&nbsp;
+                    <apex:param name="alphaChar" value="{!vr}" assignTo="{!filterchar}"/>
+                </apex:commandLink>
+            </apex:repeat> 
+        </apex:outputPanel>
+    </apex:outputPanel>
+        <br/><br/>
+        <apex:outputPanel layout="block" style="overflow :scroll; width:1450px; height : 250px;">
+            
+            
+            <!-- table of records with selected fields as rows and records as columns-->
+            <apex:pageblocktable value="{!wrapRecordList}" var="row" style="width: 100%;" id="table">
+                <!-- checkbox associated with record through wrapper class-->
+                <apex:column >
+                	<apex:facet name="header">
+                    	<apex:inputCheckbox onclick="selectAllCheckboxes(this);" styleClass="Master">
+                            <apex:actionSupport action="{!updateMap}" event="onchange" reRender="selectedCount,CSVandDELETE" status="PageStatus"/>
+                        </apex:inputCheckbox>
+                    </apex:facet>
+                   	<apex:inputCheckbox onclick="CheckAll();"  value="{!row.checked}" styleClass="child">
+                       <apex:actionSupport action="{!updateMap}" event="onchange" reRender="selectedCount,CSVandDELETE" status="PageStatus"/>
+                    </apex:inputCheckbox>
+                </apex:column>
+                <apex:outputText value="There are no records to display" rendered="{!wrapRecordList.size==0}" style="font-size: 25px;text-align:center;"/>
+				<!-- edit and Delete edit link redirect to new tab and delete link delete tha record and refresh table-->
+                <apex:column headerValue="Action">
+                    <apex:commandLink onclick="window.open('/{!row.WrapObject.id}/e?retURL={!row.WrapObject.id}')" Style="font-weight-bold" status="PageStatus" reRender="">
+                    EDIT
+                    </apex:commandLink>
+                    &nbsp;|&nbsp;
+                    <apex:commandLink action="{!deleteSingleRecord}" Style="font-weight-bold" reRender="pagecomp" status="PageStatus"> DEL
+                        <apex:param name="recordToDelete" value="{!row.WrapObject.id}" assignTo="{!recordToDelete}"/>
+                    </apex:commandLink>
+                </apex:column>
+
+                <apex:repeat value="{!fields}" var="fld" >
+                    <apex:column >
+                        <!-- header value as links to sord data by field name-->
+                        <apex:facet name="header">
+                            <apex:commandLink value="{!fld.lable} {!IF(sortField=fld.api,IF(SortOrder=' ASC','▼','▲'),'')} " action="{!sortQuery}" reRender="buttons,table" status="PageStatus" oncomplete="CheckAll();">
+                                <apex:param name="sortField" value="{!fld.api}" assignTo="{!sortField}"/>
+                            </apex:commandLink>
+                        </apex:facet>
+                        
+                        <!-- when field is name then show link which redirect to record detail page otherwise outputfield--> 
+                        <apex:outputField value="{!row.WrapObject[fld.api]}" rendered="{!fld.api!='name'}"/>
+                        <apex:commandLink onclick="window.open('/{!row.WrapObject.id}')" rendered="{!fld.api=='name'}" reRender="js"> {!row.WrapObject[fld.api]} </apex:commandLink>
+                    </apex:column>
+                </apex:repeat>
+            </apex:pageblocktable>
+            <div style="margin-left:45%; margin-top:50px;">
+                <apex:outputText value="No records to display" rendered="{!wrapRecordList.size==0}" style="font-size:15px;"/>
+            </div>
+        </apex:outputPanel> 
+
+        
+        <apex:panelGrid columns="5" id="buttons" width="100%">
+                 <!-- records on page out of total pages-->
+            <apex:outputPanel >
+                <!--<span id="selectedrec">
+                0 selected
+           	 	</span>-->
+                Selected Records: <apex:outputText value="{!selectedcount}" id="selectedCount"/>   
+                &nbsp; &nbsp;
+                <apex:outputText >{!IF(noOfRecords == 0,0,(pageNumber * size)+1-size)}-{!IF((pageNumber * size)>noOfRecords, noOfRecords,(pageNumber * size))} Out of {!noOfRecords}</apex:outputText>
+            </apex:outputPanel>
+
+            <!-- selectlist to select number of records per page -->
+            <apex:outputPanel >
+               Page Size: 
+                <apex:selectList value="{!Size}" size="1" >
+                    <apex:selectOptions value="{!pageSizeList}" />
+                    <apex:actionSupport rerender="pagecomp,js" event="onchange" action="{!refreshPage}" oncomplete="CheckAll();" status="PageStatus"/>
+                </apex:selectList>
+            </apex:outputPanel>
+            
+
+            <!-- buttons to navigate bitween pages-->
+            <apex:outputPanel > 
+                <apex:commandButton value="First"  action="{!first}" disabled="{!!hasPrevious}" reRender="pagecomp,js" oncomplete="CheckAll();" status="PageStatus"/>
+                <apex:commandButton value="Previous" action="{!previous}" disabled="{!!hasPrevious}" reRender="pagecomp,js" oncomplete="CheckAll();" status="PageStatus"/>
+                <apex:commandButton value="Next" action="{!next}" disabled="{!!hasNext}" reRender="pagecomp,js" oncomplete="CheckAll();" status="PageStatus"/>
+                <apex:commandButton value="Last"  action="{!last}" disabled="{!!hasNext}" reRender="pagecomp,js" oncomplete="CheckAll();" status="PageStatus"/>
+            </apex:outputPanel>
+            <!--page number out of total pages -->
+            <apex:outputPanel >
+                <apex:outputText id="enter">    
+                    Page:
+                    <apex:inputText value="{!pagenumber}" size="1" onkeydown="if(event.keyCode==13){this.blur();actionFunction();}">
+                        <apex:actionSupport event="onchange"  action="{!customPageNumber}" reRender="pagecomp,js" status="PageStatus"/>
+                    </apex:inputText> of {! CEILING(noOfRecords / Size)}
+                </apex:outputText>
+            </apex:outputPanel>
+            
+        </apex:panelGrid>
+    </apex:pageBlock>   
+</apex:component>
