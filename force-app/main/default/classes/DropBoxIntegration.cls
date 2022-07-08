@@ -30,7 +30,6 @@ public with sharing class DropBoxIntegration {
     // get tokens by Authcode 
     @AuraEnabled
     public static void getTokens(String authCode){
-        System.debug(authCode);
         if(!(isUserExist())){
             String endPoint = 'https://api.dropboxapi.com/oauth2/token';
             String body =  'grant_type=authorization_code'+'&code='+ authCode +
@@ -39,7 +38,6 @@ public with sharing class DropBoxIntegration {
                     '&redirect_uri=' + Auth_Data__mdt.getInstance('Drop_Box').Redirect_Url__c ;
             String type = 'POST';
             HttpResponse response = DropBoxService.callOutNoraml(endPoint, body, type, null, null);
-            System.debug(response.getBody());
             if(response.getStatuscode() == 200 ){
                 DropBoxWrapper.tokens token =  (DropBoxWrapper.tokens)JSON.deserialize(response.getBody(),DropBoxWrapper.tokens.class);
                 Integration_Access__c userIns = new Integration_Access__c();
@@ -89,12 +87,10 @@ public with sharing class DropBoxIntegration {
         headers.put('Content-Type', 'application/json');
         String body = '{"path": "'+parent+'","recursive": false,"include_media_info": false,"include_deleted": false,"include_has_explicit_shared_members": false,"include_mounted_folders": true,"include_non_downloadable_files": true}';
         HttpResponse response = DropBoxService.callOutNoraml(endPoint, body, type, headers, null);
-        System.debug('Response   :: '+response.getBody());
 
         if(response.getStatuscode() == 200 ){
             String resp = response.getBody();
             String finalResp = resp.replace('.tag', 'tag');
-            System.debug(finalResp);
             DropBoxWrapper data =  (DropBoxWrapper)JSON.deserialize(finalResp,DropBoxWrapper.class);
             return data;
         }
@@ -116,12 +112,9 @@ public with sharing class DropBoxIntegration {
         HttpResponse response = DropBoxService.callOutNoraml(endPoint, body, type, headers, null);
         if(response.getStatuscode() == 200 ){
             String resp = response.getBody();
-            System.debug(resp);
             String finalResp = resp.replace('{"metadata":', '');
             DropBoxWrapper.entries data =  (DropBoxWrapper.entries)JSON.deserialize(finalResp,DropBoxWrapper.entries.class);
-            System.debug(finalResp);
             data.tag = 'folder';
-            System.debug(data);
             return data;
         }
         else{
@@ -140,7 +133,6 @@ public with sharing class DropBoxIntegration {
         headers.put('Authorization', 'Bearer '+user[0].Access_Token__c);
         headers.put('Content-Type', 'application/json');
         HttpResponse response = DropBoxService.callOutNoraml(endPoint, body, type, headers, null);
-        System.debug(response.getBody());
         return response.getBody();
     }
 
@@ -155,7 +147,6 @@ public with sharing class DropBoxIntegration {
         headers.put('Authorization', 'Bearer '+user[0].Access_Token__c);
         headers.put('Content-Type', 'application/json');
         HttpResponse response = DropBoxService.callOutNoraml(endPoint, body, type, headers, null);
-        System.debug(response.getBody());
         
         DropBoxWrapper data =  (DropBoxWrapper)JSON.deserialize(response.getBody(),DropBoxWrapper.class);
 
@@ -167,14 +158,8 @@ public with sharing class DropBoxIntegration {
     public static DropBoxWrapper.entries uploadFile(string path, String name, String file) {
         Integration_Access__c user = [select name, Access_Token__c, Expire_In__c, Refresh_token__c from Integration_Access__c where Name =: userInfo.getUserId() AND Record_Type__c = 'DropBox'];
         
-        file = EncodingUtil.urlDecode(file, 'UTF-8');
-        // Attachment atch = new Attachment();
-        // atch.Body = EncodingUtil.base64Decode(file);
-        // atch.Name = name;
-        // atch.ContentType = 'application/octet-stream';
-        // String bodyEncoded = EncodingUtil.base64Encode(atch.Body);
-        Blob bodyEncoded2 = EncodingUtil.base64Decode(file);
-        String body = '{ "path": "' + path + '/' + name +'","mode":{".tag":"overwrite"},"autorename":true,"mute":false}';
+        Blob bodyEncoded = EncodingUtil.base64Decode(file);
+        String body = '{ "path": "' + path + '/' + name +'","mode":"add","autorename":true,"mute":false}';
 
         String type = 'POST';
         String endPoint = 'https://content.dropboxapi.com/2/files/upload';
@@ -182,13 +167,11 @@ public with sharing class DropBoxIntegration {
         headers.put('Authorization', 'Bearer ' + user.Access_Token__c);
         headers.put('Content-Type', 'application/octet-stream');
         headers.put('Dropbox-API-Arg', body);
-        headers.put('Content-length', String.valueOf(bodyEncoded.length()));
+        headers.put('Content-length', String.valueOf(file.length()));
 
-        HttpResponse response = DropBoxService.callOutNoraml(endPoint, body, type, headers, bodyEncoded2);
-        System.debug('Response   :: '+response.getBody());
+        HttpResponse response = DropBoxService.callOutNoraml(endPoint, null, type, headers, bodyEncoded);
         if(response.getStatuscode() == 200 ){
             DropBoxWrapper.entries data =  (DropBoxWrapper.entries)JSON.deserialize(response.getBody(),DropBoxWrapper.entries.class);
-            System.debug('wrapper response is '+ data);
             return data;
         }
         else{

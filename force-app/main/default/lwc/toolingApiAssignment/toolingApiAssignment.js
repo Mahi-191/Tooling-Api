@@ -32,7 +32,6 @@ export default class ToolingApiAssignment extends LightningElement {
             }
         });
          
-        console.log(seletedName);
         getDataList({name : seletedName})
         .then(result =>{
             if(result != null){
@@ -45,7 +44,6 @@ export default class ToolingApiAssignment extends LightningElement {
              else{
                  alert('Somthing went wrong');
              }
-            console.log(result);
         })
 
     }

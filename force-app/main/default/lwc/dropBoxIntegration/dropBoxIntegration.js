@@ -22,6 +22,7 @@ export default class DropBoxIntegration extends LightningElement {
     showDeleteModel = false;
     showUpload = false;
     showSpinner = true;
+    fileData;
     connectedCallback(){
         //check user is new oe existing 
         isUserExist()
@@ -150,98 +151,37 @@ export default class DropBoxIntegration extends LightningElement {
 
     // Functionality to upload File and show file on UI
     fileUpload(event){
-        this.showSpinner = true;
-        let folderPath = this.myBreadcrumbs[this.myBreadcrumbs.length - 1].path;
-        let fileData = event.detail.files;
-        let filesUploaded = fileData[0];
-        let fileName = fileData[0].name;
-        var base64Data;
-
-        const toBase64 = (file) =>
-        new Promise((resolve, reject) => {
+        let file = event.detail.files[0];
         const reader = new FileReader();
-        reader.readAsBinaryString(fileData[0]);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = (error) => reject(error);
-        // reader.onload = function(e){
-        //     base64Data = btoa(reader.result);    
-        // }
-        });
-        toBase64(filesUploaded)
-        .then((result) => {
-            console.log(result);
-            base64Data = btoa(result);
-          
-            uploadFile({path : folderPath, name : fileName, file : base64Data})
-                    .then(result=>{
-                        console.log('response is',result);
-                        if(result === null){
-                            alert('Somthing is wrong');
-                            this.showSpinner = false;
-                        }
-                        else{                            
-                            console.log('inside else part');
-                            console.log(' response recived  ' + result);
-                            this.showUpload = false;
-                            this.showSpinner = false;
-                            alert('file uploded');  
-                            this.fetchData(folderPath);   
-                       }   
-                });
-        });
-       
-        
-     
+        reader.onload = () => {
+           let base64Data = reader.result.split(',')[1];
+           this.fileData ={
+            'fileName' : file.name,
+            'base64': base64Data
+           }   
+        }   
+        reader.readAsDataURL(file);
     }
 
-    // handleFileChange(event) {
-    //     if (event.target.files.length > 0) {
-    //       this.filesUploaded = event.target.files[0];
-    //       this.fileName = event.target.files[0].name;
-    //      }
-    //   }
-      
-    //   fileUpload(event) {
-    //     let base64Data ='';
-    //     this.showSpinner = true;
-    //     let folderPath = this.myBreadcrumbs[this.myBreadcrumbs.length - 1].path;
-    //     let fileData = event.detail.files;
-    //     let filesUploaded = fileData[0];
-    //     let fileName = fileData[0].name;
-    //    const toBase64 = (file) =>
-    //    new Promise((resolve, reject) => {
-    //       const reader = new FileReader();
-    //       reader.readAsBinaryString(file);
-    //       reader.onload = () => resolve(reader.result);
-    //       reader.onerror = (error) => reject(error);
-    //   });
-    //   toBase64(filesUploaded)
-    //   .then((result) => {
-    //       const base64Constant = 'base64,';
-    //       const base64Value =
-    //       result.indexOf(base64Constant) + base64Constant.length;
-    //       base64Data = result.substring(base64Value);
-    //   });
+    uploadThis(){
+        this.showSpinner = true;
+        let folderPath = this.myBreadcrumbs[this.myBreadcrumbs.length - 1].path;
+        uploadFile({path : folderPath, name : this.fileData.fileName, file : this.fileData.base64})
+        .then(result=>{
+            if(result === null){
+                alert('Somthing is wrong');
+                this.showSpinner = false;
+            }
+            else{                            
+                this.showUpload = false;
+                this.showSpinner = false;
+                alert('file uploded');  
+                this.fetchData(folderPath);   
+           }   
+    });
+    }
 
-    //   uploadFile({path : folderPath, name : fileName, file : base64Data})
-    //                 .then(result=>{
-        
-    //                     if(result === null){
-    //                         alert('Somthing is wrong');
-    //                         this.showSpinner = false;
-    //                     }
-    //                     else{                            
-    //                         console.log('inside else part');
-    //                         console.log(' response recived  ' + result);
-    //                         this.showUpload = false;
-    //                         this.showSpinner = false;
-    //                         alert('file uploded');  
-    //                        this.fetchData(folderPath);   
-    //                    }   
-    //             });
-    // }
     // functionality to delete file and hide from ui
-
     deleteFile(){
         this.showSpinner = true;
         deleteItem({path : this.deleteFilePath})

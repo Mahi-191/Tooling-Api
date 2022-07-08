@@ -134,6 +134,10 @@
                <div class="slds-modal__content slds-p-around_medium" id="upload">                
                    <lightning-input name="file1" type="file" label="Choose File" onchange={fileUpload}></lightning-input>
                </div>
+
+               <div class="slds-modal__footer">
+                <lightning-button variant="brand" label="Upload" onclick={uploadThis}></lightning-button>
+            </div>
            </div>
        </section>
        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>

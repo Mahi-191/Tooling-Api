@@ -10,7 +10,7 @@ public with sharing class SalesforceIntegrationController {
     // method to get files related to the login user's contact.
     @AuraEnabled
     public static List<FileData> getLocalData(){
-        User usr = [Select u.Id,u.ContactId from User u where u.id =:userInfo.getUserId()];
+        User usr = [Select Id, ContactId from User where id =:userInfo.getUserId()];
         String conId = usr.ContactId;
         if(conId != null){
             List<FileData> result = new List<FileData>();
