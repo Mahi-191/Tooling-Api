@@ -22,9 +22,10 @@ public with sharing class ClientSidePagination {
                         ColunmWrapper myWrap = new ColunmWrapper();    
                         myWrap.fieldLabel = field.getDescribe().getLabel();  
                         myWrap.fieldApi = field.getDescribe().getName(); 
-                        myWrap.type = field.getDescribe().getType(); 
+                        myWrap.type = String.valueOf(field.getDescribe().getType()); 
                         myWrap.sortable = true;
                         wrapList.add(myWrap); 
+                        
                     }
                 }
             }
@@ -52,7 +53,7 @@ public with sharing class ClientSidePagination {
     public class ColunmWrapper{
         @AuraEnabled public String fieldLabel;
         @AuraEnabled public String fieldApi;
-        @AuraEnabled public Schema.DisplayType type;
+        @AuraEnabled public String type;
         @AuraEnabled public boolean sortable;
     }
 }

@@ -1,0 +1,102 @@
+<template>
+    <!-- Spinner -->
+    <div  class="slds-is-relative" if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+    </div>
+
+    <!-- Search Records and Picklist Filter -->
+    <div class="slds-grid">
+        <div class="slds-size_1-of-2"> 
+            <!-- Searching -->
+            <lightning-input type="search" placeholder="Search Name" onchange={searchKeyword}></lightning-input>
+        </div>
+
+        <div class="slds-size_1-of-2">
+            <!-- PickList Filter -->filter
+        </div>
+
+    </div>
+    <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered css-serial">
+        <thead>
+            <tr class="slds-line-height_reset"> 
+                <th style='width: 20px'>Expend</th>                
+                <template for:each={actColumnsList} for:item="colHeader" for:index="index">                      
+                    <th scope="col" key={colHeader}>
+                        <a onclick={sort} data-id={colHeader.fieldName}>  <strong>
+                            <div class="slds-truncate slds-grid" title="Id">{colHeader.label}
+                                <!-- sort Arrow -->
+                                <div if:true={colHeader.isSorted} data-id={colHeader.fieldName} data-index={index} class="slds-col slds-m-left_small">
+                                    <lightning-icon icon-name="utility:arrowup" if:true={arrowUp} size="x-small"></lightning-icon>
+                                    <lightning-icon icon-name="utility:arrowdown" if:true={arrowDWN} size="x-small"></lightning-icon>
+                                </div>
+                            </div></strong>
+                        </a>
+                    </th>
+                </template>
+                <th>
+                    <strong>Action</Strong>
+                </th>
+            </tr>
+        </thead>
+        <tbody if:true={showTable}>
+            <template for:each={UiActData} for:item="obj" for:index="index">
+                <tr key={obj.Id} class="slds-hint-parent">
+                    <td>
+                        <!-- Expand Functionality -->
+                        +
+                        <!-- <template if:true={obj.showContact}> 
+                            <lightning-icon icon-name={record.arrow} data-id={obj.Id} size="small" onclick={showContacts}></lightning-icon>
+                        </template> -->
+                    </td>                    
+                    <template for:each={actColumnsList} for:item="field">
+                        <td key={obj.Id}>
+                            <c-lazy-loading-data record={obj} fieldapi={field.fieldName}></c-lazy-loading-data>
+                        </td>
+                    </template>
+                    <td>
+                        Action
+                    </td>
+                </tr>
+                <template if:true={record.displayContact}>
+                    <!-- Show Contact Records -->
+                    <!-- <tr key={record.Grants}>
+                        <td colspan="5">
+                            <c-patient-grant-table key={record.Grants} columns={contactColList}
+                                columns-label={grantColumnsLabel} records={record.Grants}
+                                onopenrenewalmodel={showRenewalModel} onopensecondrymodel={handleSecondGrant}>
+                            </c-patient-grant-table>
+                        </td>
+                    </tr> -->
+                </template>
+            </template>
+        </tbody>  
+        <tbody if:false={showTable}>
+            <tr>
+                <td colspan="5">
+                    <div class="slds-align_absolute-center">
+                        <p>No Contact available</p>
+                    </div>
+                </td>
+            </tr>
+        </tbody>          
+    </table>
+    <!-- section for navigation  -->
+    <div class="slds-box slds-grid slds-theme_shade">
+        <!-- Select Page Size comboBox -->
+       <div class="slds-size_1-of-5 slds-align_absolute-center">
+           <lightning-combobox value={pageSize} label=" Records per Page:"
+                               options={pageSizeList} onchange={onSizeChange} >
+           </lightning-combobox>
+       </div>
+
+       <!-- Buttons (first, Previous, Next, Last and 5 pageNumber Buttons) -->
+       <div class="slds-size_3-of-5 slds-align_absolute-center slds-m-top_medium">
+           <lightning-button name="first" class="slds-m-left_xxx-small" label="&lt;&lt;" variant="brand-outline" onclick={handelNavButtons} disabled={disablePrevious}></lightning-button>
+           <lightning-button name="previous" class="slds-m-left_xxx-small" label="&lt;" variant="brand-outline"  onclick={handelNavButtons} disabled={disablePrevious}></lightning-button>
+           <lightning-button name="next" class="slds-m-left_xxx-small" label="&gt;" variant="brand-outline" onclick={handelNavButtons} disabled={disableNext}></lightning-button>
+           <lightning-button name="last" class="slds-m-left_xxx-small" label="&gt;&gt;" variant="brand-outline" onclick={handelNavButtons} disabled={disableNext}></lightning-button>
+       </div>
+       <!-- PageNumber out of Total Pages -->
+       <div class="slds-size_1-of-5 slds-align_absolute-center">page: {pageNumber}/{totalPages} </div>
+   </div>
+</template>

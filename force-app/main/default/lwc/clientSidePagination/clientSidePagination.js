@@ -25,7 +25,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
     @track pageNoButtonList =[];
     sortDirection;
     sortedBy;
-    @track selectedIDs = [];
     @track tempSelectIds = [];
     isnoRecords;
     showSpinner = true;
@@ -47,7 +46,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
     
     // make column list for data table
     columns(){
-        console.log('columns 2');
         columnValue({objName : this.selectedobject, fieldList : JSON.parse(JSON.stringify(this.selectedfields))})
         .then(result => {
             this.columnList = [];
@@ -57,7 +55,15 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
                 if(tempList[field].fieldApi == 'Name'){
                     this.hasName = true;
                 }
-                this.columnList.push({label: tempList[field].fieldLabel , fieldName: tempList[field].fieldApi , type: tempList[field].type, sortable: tempList[field].sortable});           
+                if(tempList[field].type == 'DATE'){
+                    this.columnList.push({label: tempList[field].fieldLabel , fieldName: tempList[field].fieldApi , type: 'date', typeAttributes :{ day: 'numeric', month: 'short', year: 'numeric'}, sortable: tempList[field].sortable});   
+                }
+                else  if(tempList[field].type == 'DATETIME'){
+                    this.columnList.push({label: tempList[field].fieldLabel , fieldName: tempList[field].fieldApi , type: 'date', typeAttributes :{ day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'}, sortable: tempList[field].sortable});   
+                }
+                else{
+                    this.columnList.push({label: tempList[field].fieldLabel , fieldName: tempList[field].fieldApi , type: tempList[field].type, sortable: tempList[field].sortable});           
+                }
             }
             this.columnList.push(
             {   label: 'Action',
@@ -74,7 +80,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
 
     //fetch data from org via calling apex method
     fetchdata(){
-        console.log('fetch data 1');
         fetchRecords({objName : this.selectedobject, fieldList : JSON.parse(JSON.stringify(this.selectedfields))})
         .then(result =>{
             this.allRecords = result;
@@ -91,7 +96,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
 
     //total records of selected object
     totalRec(){
-        console.log('total records 3');
         totalRecords({objName : this.selectedobject})
         .then(result =>{
             this.recordCount = result;
@@ -116,7 +120,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
 
     // list for page per size combobox
     makeSizeList() {
-        console.log('size list 4');
         this.pageSizeList.push({'label':'5', 'value':'5'});
         this.pageSizeList.push({'label':'10', 'value':'10'});
         this.pageSizeList.push({'label':'25', 'value':'25'});
@@ -140,63 +143,46 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
        
     }
 
-    //handel next button show next records if available else disabled
-    handelNext(){
-        this.showSpinner = true;  
-        this.startIndex = this.endIndex+1;
-        this.endIndex =+this.endIndex + +this.pageSize;    
-       
-        this.pageNumber = +this.pageNumber + 1;
+    // handel Navigation Buttons 
+    handelNavButtons(event){
+        this.showSpinner = true;
+        let button = event.target.name;
+        if(button == 'next'){
+            this.startIndex = this.endIndex+1;
+            this.endIndex =+this.endIndex + +this.pageSize;    
+            this.pageNumber = +this.pageNumber + 1;
+        }
+        else if(button == 'last'){
+            this.endIndex = this.totalPages*this.pageSize-1;
+            this.startIndex = this.endIndex-this.pageSize+1;
+            this.pageNumber = this.totalPages;
+        }
+        else if(button == 'first'){
+            this.startIndex = 0;
+            this.endIndex = this.pageSize-1;
+            this.pageNumber = 1;
+        }
+        else if(button == 'previous'){
+            this.endIndex = this.startIndex-1;
+            this.startIndex -= this.pageSize;
+            this.pageNumber -= 1;
+        }
         this.disablebuttons();
         this.managePageList(this.pageNumber);
-        this.showRecordsOnPage();
-        
+        this.showRecordsOnPage();        
     }
 
-    //handel last button
-    handelLast(){
-        this.showSpinner = true;
-        this.endIndex = this.totalPages*this.pageSize-1;
-        this.startIndex = this.endIndex-this.pageSize+1;
-        this.pageNumber = this.totalPages;
-       
-        this.disablebuttons();
-        this.managePageList(this.pageNumber);
-        this.showRecordsOnPage();
-        
-    }
-
-    // handel First button 
-    handelFirst(){
-        console.log('first');
-        this.showSpinner = true;
+    goOnFirstPage(){
         this.startIndex = 0;
         this.endIndex = this.pageSize-1;
         this.pageNumber = 1;
         this.disablebuttons();
         this.managePageList(this.pageNumber);
-        this.showRecordsOnPage();
-        
-        console.log('firstend');
-    }
-
-    handlePrevious(){
-        console.log('previous');
-        this.showSpinner = true;
-        this.endIndex = this.startIndex-1;
-        this.startIndex -= this.pageSize;
-       
-        this.pageNumber -= 1;
-        this.disablebuttons();
-        this.managePageList(this.pageNumber);
-        this.showRecordsOnPage();
-       
-        console.log('previousend');
+        this.showRecordsOnPage();    
     }
 
     // disable buttons when needed
     disablebuttons(){
-        console.log('disableButtons method');
         if(this.pageNumber >= this.totalPages){
             this.disableNext = true;
         }
@@ -214,7 +200,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
 
     // handel buttons list (1,2,3,4,5) according to page number and number of records 
     handelpageNoButton(event){
-        console.log('numberButton')
         this.showSpinner = true;
         let btn = event.target.dataset.key;
         if(btn <= this.totalPages){
@@ -234,21 +219,21 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
     //show records in table using start index and end index 
     showRecordsOnPage(){
         this.showrecords = [];
-        console.log('showRecords');
         this.fromNevigation = true;
-        this.selectedIDs = this.tempSelectIds;
+        // this.selectedIDs = this.tempSelectIds;
         for(let i = this.startIndex; i<= this.endIndex; i++){
             if(this.recordCount>i){
                 this.showrecords.push(this.allRecords[i]);
             }
         }
         this.showSpinner = false;
-        this.selectedIDs = this.tempSelectIds;
+        // this.selectedIDs = this.tempSelectIds;
         for(let i=0; i<this.pageNoButtonList.length;i++){
             if(this.pageNoButtonList[i].value == this.pageNumber){
                 this.pageNoButtonList[i].style = 'changeProperty';
             }
-        }    
+        } 
+        this.template.querySelector("lightning-datatable").selectedRows = this.tempSelectIds;   
     }
 
     handleRowAction(event){
@@ -272,7 +257,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
                         console.log(' clone ',row.Id);
                         break;
             case 'delete':
-                        console.log(' delete ',row.Id);
                         deleteRecord({recId : row.Id})
                         .then(result=>{
                             if(result == true){
@@ -289,35 +273,9 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
             default:
         }
     }
-        // let dt = this.template.querySelector('lightning-datatable');
-        // console.log(el);
-        // let selectedCheckbox = dt.getSelectedRows();
-        // let selected = new Set();
-        // let notSelected = new Set();
-        // let AllSelected = new Set();
-        // for(var i=0;i<selectedCheckbox.length;i++){
-        //     selected.add(selectedData[i].Id);
-        // }
-        // AllSelected =  this.selectedIDs.concat(selected);
-        // this.selectedIDs.concat(this.selectedIDs,selected);
-        // let recordsOnPage = this.showrecords;
-
-        // for (let rec of Object.values(recordsOnPage)) {
-        //     if(!selected.has(rec.Id)){ 
-        //         notSelected.add(rec.Id);
-        //     }
-        // }
-        // for(let i  of notSelected){
-        //     if(AllSelected.has(i)){
-        //         AllSelected.delete(i);
-        //     }
-        // }
-        // this.selectedIDs = Array.from(AllSelected);
-    //}
 
     // manage buttons of pageNumber
     managePageList(btn){
-        console.log('managePageList');
         var totalPage = this.totalPages;
         var currentPageNo = this.pageNumber;
         this.pageNoButtonList =[];
@@ -343,16 +301,14 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
             else{
                 this.pageNoButtonList.push({value:btn-3,style:''},{value:btn-2,style:''},{value:btn-1,style:''},{value:btn,style:''},{value:+btn+1,style:''});                        
             } 
-        } 
-        //this.showSpinner = false;            
+        }          
     }
 
+    // maintain checkbox state 
      checkboxState(event){
-        //if(!this.fromNevigation){
-        window.console.log('chackbox method ');
         this.showSpinner = true;
         let selectedData = event.detail.selectedRows;
-        let AllSelectedlst = new Set(this.selectedIDs);
+        let AllSelectedlst = new Set(this.tempSelectIds);
         let selected = new Set();
         let notSelected = new Set();
         let recordsOnPage = this.showrecords;
@@ -372,12 +328,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
         }
         
         this.tempSelectIds = Array.from(AllSelectedlst);
-        window.console.log(this.tempSelectIds);
-   // }
-   // else{
-      //  this.fromNevigation = false;
-   // }
-         
         this.showSpinner = false;   
     }
 
@@ -386,7 +336,6 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
         this.showSpinner = true;
         
         this.sortedBy = event.detail.fieldName;
-        console.log('Api name',this.sortedBy);
         this.sortDirection = event.detail.sortDirection;
         this.sortData(this.sortedBy, this.sortDirection);
     }   
@@ -404,7 +353,7 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
             return isReverse * ((x > y) - (y > x));
         });
         this.allRecords = parseData;
-        this.handelFirst();
+        this.goOnFirstPage();
         this.showSpinner = false;
     }    
 
@@ -426,7 +375,7 @@ export default class ClientSidePagination extends NavigationMixin (LightningElem
         }
         this.recordCount = Object.keys(this.allRecords).length;
         this.totalPages = Math.ceil(this.recordCount / Number(this.pageSize));
-        this.handelFirst()
+        this.goOnFirstPage()
     }
 
       //Tost event to show messages 

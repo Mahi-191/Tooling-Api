@@ -1,0 +1,105 @@
+<template>
+    <div class="slds-align_absolute-center">
+        <div class="slds-box slds-size_2-of-3 slds-theme_default" style="height: 900px;">
+            <p>Enrollment confirmation</p>
+            <p>[patient Name] hag been approved for the [disease fund] grant.</p><br/>  
+
+            <div class="slds-card">
+                <!-- grant info -->
+                <div class="slds-card__body slds-card__body_inner" >
+                    <!-- Header -->
+                   <p class="slds-m-around_medium"> [disease fund] grant information </p> 
+                </div>
+                <footer class="slds-card__footer slds-clearfix">
+                    <table class="slds-m-around_large">
+                        <tr>
+                            <td>Patient Id:</td>
+                            <td>00000000000</td>
+                            <td>Enrollment Sr Id:</td>
+                            <td>0000000</td>
+                        </tr>
+                        <tr>
+                            <td>Group Id:</td>
+                            <td>000000000</td>
+                        </tr>
+                        <tr>
+                            <td>RxBin Id:</td>
+                            <td>000000000</td>
+                        </tr>
+                        <tr>
+                            <td>PCN: </td>
+                            <td>PANF</td>
+                        </tr>
+                        <tr>
+                            <td>Eligibility Strat Date: </td>
+                            <td>12/29/2022</td>
+                        </tr>
+                        <tr>
+                            <td>Eligibility End Date:</td>
+                            <td>12/29/2023</td>
+                        </tr>
+                        <tr>
+                            <td>Assistance amount:</td>
+                            <td>$3000</td>
+                        </tr>
+
+                    </table>
+                  </footer>
+              
+            </div><br/>
+
+
+            <div class="slds-card">
+                <div class="slds-card__body slds-card__body_inner slds-m-around_medium">Additional funding sources and assistance programe</div>
+                <div class="slds-border_top">
+                  <div class="slds-m-around_medium">
+                    Does the caller want information about additional funding sources and assistance programs? 
+                    &nbsp;
+                    <input type="radio" name="option" value="Yes">
+                    Yes&nbsp;
+                    <input type="radio" name="option" value="No">No<br/>
+                    <table  class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_col-bordered slds-m-top_medium slds-m-bottom_medium" >
+                        <thead>
+                            <tr>
+                                 <th>Programe Name</th>
+                                <th>WebSite Address</th>
+                                <th>Phone</th>
+                            </tr>
+                           
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>HelthWell</td>
+                                <td><a>https://www.helthwellfoundation.org/disease-funds</a></td>
+                                <td>888-999-9993</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    Email a copy of this information to the following email address:<br/>
+                    <lightning-input type="email" placeholder="Enter Email Address"></lightning-input>                  </div>
+                </div>
+            </div><br/>
+
+            <div class="slds-card">
+                <div class="slds-card__body slds-card__body_inner slds-m-around_medium">Additional enrollment</div>
+                <div class="slds-border_top">
+                  <div class="slds-m-around_medium">
+                    Does the caller want to enroll in another fund? 
+                    &nbsp;
+                    <input type="radio" name="option2" value="Yes">
+                    Yes&nbsp;
+                    <input type="radio" name="option2" value="No">No<br/>
+                  </div>
+                </div>
+            </div><br/>
+
+<!-- Buttons -->
+            <div class="slds-float_right ">
+                <lightning-button name="Previous" class="slds-m-left_xxx-small" label="Previous" variant="brand-outline" onclick={handelNavButtons} ></lightning-button>
+                <lightning-button name="Next" class="slds-m-left_xxx-small" label="Next" variant="brand-outline" onclick={handelNavButtons} ></lightning-button>
+
+            </div>
+        </div>
+    </div>
+</template>
