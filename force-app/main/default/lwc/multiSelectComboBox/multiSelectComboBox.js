@@ -11,7 +11,15 @@ export default class MultiSelectComboBox extends NavigationMixin (LightningEleme
     selectedOption = null;
     selectedOptions = [];
     recordPageUrl = '';
+    abcd = {};
     connectedCallback(){
+        if(Object.keys(this.abcd).length !== 0){
+            console.log('not run on === ' , this.abcd);
+        }
+        else{
+            console.log(' run on ===');
+
+        }
         getData({Sobj : this.sobject, searchkey : null})
         .then(result => {
             for(var i=0;i<result.length;i++){

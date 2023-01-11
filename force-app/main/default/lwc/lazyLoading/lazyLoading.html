@@ -36,8 +36,8 @@
                          <a onclick={sort} data-id={colHeader.fieldName}>  <strong><div class="slds-truncate slds-grid" title="Id">{colHeader.label}
 
                             <div data-id={colHeader.fieldName} data-index={index} class="slds-col slds-m-left_small" if:true={colHeader.isSorted}>
-                                <div if:true={arrowUp}>&#x21E7;</div>
-                                <div if:true={arrowDWN}>&#x21E9;</div>
+                                <div if:true={arrowUp}> &#x21E7; </div>
+                                <div if:true={arrowDWN}> &#x21E9; </div>
                             </div>
                          </div></strong>
                             
@@ -51,11 +51,6 @@
                    <tr key={obj.Id} class="slds-hint-parent">
                     <td style='width: 20px'></td>
                     <td><lightning-input type="checkbox" checked={obj.isChecked} name="input2" onchange={childCheckBox} data-index={index}></lightning-input></td>   
-                       <!-- <template for:each={obj.values} for:item="val">               
-                           <td key={val}> 
-                               {val}
-                           </td>
-                       </template> -->
                        <template for:each={columnsList} for:item="field">
                         <td key={obj.Id}>
                             <c-lazy-loading-data record={obj} fieldapi={field.fieldName}></c-lazy-loading-data>

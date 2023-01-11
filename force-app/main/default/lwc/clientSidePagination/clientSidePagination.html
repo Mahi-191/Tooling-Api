@@ -28,7 +28,7 @@
                                      sorted-direction={sortDirection}
                                      sorted-by={sortedBy}
                                      onsort={onHandleSort}
-                                     selected-rows={selectedIDs}
+                                     
                                      onrowselection={checkboxState}
                                      onrowaction={handleRowAction}>
                 </lightning-datatable>
@@ -45,15 +45,15 @@
 
                 <!-- Buttons (first, Previous, Next, Last and 5 pageNumber Buttons) -->
                 <div class="slds-size_3-of-5 slds-align_absolute-center slds-m-top_medium">
-                    <lightning-button class="slds-m-left_xxx-small" label="&lt;&lt;" variant="brand-outline" onclick={handelFirst} disabled={disablePrevious}></lightning-button>
-                    <lightning-button class="slds-m-left_xxx-small" label="&lt;" variant="brand-outline"  onclick={handlePrevious} disabled={disablePrevious}></lightning-button>
+                    <lightning-button name="first" class="slds-m-left_xxx-small" label="&lt;&lt;" variant="brand-outline" onclick={handelNavButtons} disabled={disablePrevious}></lightning-button>
+                    <lightning-button name="previous" class="slds-m-left_xxx-small" label="&lt;" variant="brand-outline"  onclick={handelNavButtons} disabled={disablePrevious}></lightning-button>
                     <template for:each={pageNoButtonList} for:item="btnValue">
                         <div key={btnValue.value} class={btnValue.style}>
                             <button class="slds-button slds-button_outline-brand slds-m-left_xxx-small" data-key={btnValue.value} onclick={handelpageNoButton}>{btnValue.value}</button> 
                         </div>
                     </template>
-                    <lightning-button class="slds-m-left_xxx-small" label="&gt;" variant="brand-outline" onclick={handelNext} disabled={disableNext}></lightning-button>
-                    <lightning-button class="slds-m-left_xxx-small" label="&gt;&gt;" variant="brand-outline" onclick={handelLast} disabled={disableNext}></lightning-button>
+                    <lightning-button name="next" class="slds-m-left_xxx-small" label="&gt;" variant="brand-outline" onclick={handelNavButtons} disabled={disableNext}></lightning-button>
+                    <lightning-button name="last" class="slds-m-left_xxx-small" label="&gt;&gt;" variant="brand-outline" onclick={handelNavButtons} disabled={disableNext}></lightning-button>
                 </div>
                 <!-- PageNumber out of Total Pages -->
                 <div class="slds-size_1-of-5 slds-align_absolute-center">page: {pageNumber}/{totalPages} </div>
